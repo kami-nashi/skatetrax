@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('template.html')
+    return render_template('etemp_dashboard.html')
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():

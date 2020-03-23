@@ -78,7 +78,7 @@
               Numbers ... Lots of numbers</div>
             <div class="card-body">
 
-           {% block much_content %}{% endblock %}
+           {% block chart_body %}{% endblock %}
 
             </div>
             <div class="card-footer small text-muted">SkateTrax Demo Only</div>
@@ -146,6 +146,7 @@
 
     <!-- Demo scripts for this page-->
     <script src="{{ url_for('static', filename='js/datatables-brief.js') }}"></script>
+   {% block chart_js %}{% endblock %}
 
   </body>
 
