@@ -1,6 +1,16 @@
 import pymysql
+import configparser as conf
 
-def dbconnect(host, user, password, table, sql):
+def dbconnect(sql):
+   configParser = conf.RawConfigParser()
+   configFilePath = r'/etc/skatetrax/settings.conf'
+   configParser.read(configFilePath)
+
+   host = configParser.get('dbconf', 'host')
+   user = configParser.get('dbconf', 'user')
+   password = configParser.get('dbconf', 'password')
+   db = configParser.get('dbconf', 'db')
+
    con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor)
    cur = con.cursor()
    cur.execute(sql)
@@ -130,7 +140,7 @@ def addSchool():
         classCost += i['class_cost']
     return classCost
 
-def addCostsTotal()
+def addCostsTotal():
     costMaint = maintenance()
     costClub = addClub()
     costClass = addSchool()
@@ -146,7 +156,7 @@ def addCostsTotal()
 ##						Calculate Punch Cards					      ##
 ################################################################################################################
 
-def skateTotal()
+def skateTotal():
     skateTotal = 0
     punchTotal = 0
     punchesTotal = 0
