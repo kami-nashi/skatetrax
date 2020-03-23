@@ -1,5 +1,168 @@
 {% extends "template.html" %}
 
+{% block chart1 %}
+<section class="row text-center placeholders">
+<div class="col-5 col-sm-2 placeholder">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Financial Overview </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">$662.56</td>
+            <td class="text-left"> Equipment </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">$150.71</td>
+            <td class="text-left"> Maintenance </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">$300.00</td>
+            <td class="text-left"> Class Fees </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">$70.00</td>
+            <td class="text-left"> Performance Fees </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">$88.35</td>
+            <td class="text-left"> Membership Fees </td>
+        </tr><tr class="small">
+            <td class="text-right">$35.00</td>
+            <td class="text-left"> Competition Fees </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">$1,753.00</td>
+            <td class="text-left"> Ice Time </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">$2,275.00</td>
+            <td class="text-left"> Coaching Cost </td>
+        </tr>
+        </tbody>
+    </table>
+              <h4>Total</h4>
+              <div class="text-muted">$5334.62</div></div>
+
+    <div class="col-4 col-sm-2 placeholder">
+        <canvas id="pie-chart" width="250" height="250" style="display: block;"></canvas>
+    </div>
+
+    <script>
+        new Chart(document.getElementById("pie-chart"), {
+        type: "pie",
+        data: {
+          labels: ["Equipment", "Maintenance", "Class Fees", "Performance", "Membership Fees", "Competition Fees", "Ice Time", "Coaching Cost"],
+          datasets: [{
+          label: "Totals",
+    backgroundColor: ["#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850","#4cc5b7","#d816e0","#3d86e8"],       data: [662.56,150.71,300,70,88.35,35,1753,2275]
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: "Financial Totals"
+          },
+         legend: {
+            display: false,
+            }
+        }
+    });
+    </script>
+
+
+<div class="col-6 col-sm-2 placeholder">
+   <div> <canvas id="doughnut-chart" width="227" height="227" style="display: block; width: 227px; height: 227px;"></canvas></div>
+<script>
+new Chart(document.getElementById("doughnut-chart"), {
+    type: "doughnut",
+    data: {
+      labels: ["Coached", "Uncoached"],
+      datasets: [
+        {
+          label: "Training Hours",
+          backgroundColor: ["#3e95cd", "#8e5ea2"],         data: [33,123.5]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: false,
+        text: "Amount of hours coached vs uncoached"
+      }
+    }
+});
+</script>
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Training Hours </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">33.00</td>
+            <td class="text-left"> Coached Hours </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">123.50</td>
+            <td class="text-left"> Uncoached Hours </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="col-6 col-sm-2 placeholder">
+
+<div>
+    <canvas id="doughnut-chart2" width="216" height="216" style="display: block; width: 216px; height: 216px;"></canvas>
+</div>
+<script>
+new Chart(document.getElementById("doughnut-chart2"), {
+    type: "doughnut",
+    data: {
+      labels: ["Time On", "Time Remaining"],
+      datasets: [
+        {
+          label: "Hours Overview",
+          backgroundColor: ["#009900", "#70db70"],    data: [5,16]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: false,
+        text: "Hours Overview"
+      }
+    }
+});
+</script>
+<div class="col-6 col-sm-3 placeholder">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Maintenance </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">5.00</td>
+            <td class="text-left"> Current Hours </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">16.00</td>
+            <td class="text-left"> Hours Remaining </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+</section>
+{%endblock%}
+
+
 {% block chart_body %}
 <div class="card mb-3">
             <div class="card-header">
