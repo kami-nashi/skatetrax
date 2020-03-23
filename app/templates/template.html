@@ -28,7 +28,7 @@
 
   <body id="page-top">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-      <a class="navbar-brand mr-1" href="/">DSMUtils</a>
+      <a class="navbar-brand mr-1" href="/">Skatetrax</a>
       <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
         <i class="fas fa-bars"></i>
       </button>
@@ -58,38 +58,6 @@
             <span>Dashboard</span>
           </a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Logs</span>
-          </a>
-          <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-            <h6 class="dropdown-header">Sleeper Beauty:</h6>
-            {% block table %}
-            {% for row in table %}
-            <a class="dropdown-item" href="/logs/{{row['Tables_in_dsmutils_csv'] }}">{{row['Tables_in_dsmutils_csv'] }}</a>
-            {% endfor %}
-            {% endblock %}
-          </div>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Calculators ...</span>
-          </a>
-        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-            <a class="dropdown-item" href="/calcFuelMix">Fuel Mix</a>
-            <a class="dropdown-item" href="/calcFuelReq">Fuel Requirements</a>
-            <a class="dropdown-item" href="/CalcFuelWeight">Fuel Weight</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/CalcFuelFlowRateMeasurement">Pump Flow Rate</a>
-            <a class="dropdown-item" href="/CalcRequiredInjectorSize">Injector Sizing</a>
-            <a class="dropdown-item" href="/CalcESTFuelandAirflow">Fuel & Airflow</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="CalcMAFCompAirflowCorrectionWB">MAF Correction: WB</a>
-            <a class="dropdown-item" href="CalcMAFCompAirflowCorrectionBoost">MAF Correction: Boost</a>
-        </div>
-        </li>
       </ul>
 
       <div id="content-wrapper">
@@ -107,13 +75,13 @@
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-chart-area"></i>
-              Imported Log</div>
+              Numbers ... Lots of numbers</div>
             <div class="card-body">
 
            {% block much_content %}{% endblock %}
 
             </div>
-            <div class="card-footer small text-muted">DSM Util Demo Only</div>
+            <div class="card-footer small text-muted">SkateTrax Demo Only</div>
           </div>
 
           <!-- DataTables Example -->
@@ -127,7 +95,7 @@
         <footer class="sticky-footer">
           <div class="container my-auto">
             <div class="copyright text-center my-auto">
-              <span>Want to contribute? Check out our repo! <a href="https://github.com/kami-nashi/DSMUtils">https://github.com/kami-nashi/DSMUtils</a></span>
+              <span>........</a></span>
             </div>
           </div>
         </footer>
@@ -172,14 +140,12 @@
     <!-- Page level plugin JavaScript-->
     <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4-1.min.js') }}"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="{{ url_for('static', filename='js/sb-admin.min.js') }}"></script>
 
     <!-- Demo scripts for this page-->
     <script src="{{ url_for('static', filename='js/datatables-brief.js') }}"></script>
-   {% block chart_log %}{% endblock %}
 
   </body>
 
