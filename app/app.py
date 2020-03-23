@@ -24,7 +24,7 @@ def sessionsFull():
 
 @app.route('/api/json/sessionsBrief', methods=['GET'])
 def sessionsBrief():
-    session = json.loads(lj.sessionsFull())
+    session = json.loads(lj.sessionsBrief())
     jsession = json.dumps(session, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
