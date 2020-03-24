@@ -96,8 +96,8 @@ def maintenance():
 def addTotals():
     ice = icetimeAdd()
     coach = coachtimeAdd2()
-    maintenance = maintenance()
-    cost = ice[0]+coach[0]+maintenance[1]
+    maint = maintenance()
+    cost = [ice[0],coach[0],maint[1]]
     return cost
 
 def addEventsC():
@@ -145,11 +145,14 @@ def addCostsTotal():
     costClub = addClub()
     costClass = addSchool()
     costEquip = addEquip()
+    costIce = icetimeAdd()
     eventsC = addEventsC()
     eventsP = addEventsP()
     timeCoach = coachtimeAdd2()
 
-    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC]
+    total = (costEquip+costMaint[1]+costClass+eventsP+costClub+eventsC+costIce[1]+timeCoach)
+
+    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach,total]
     return query
 
 ################################################################################################################

@@ -8,12 +8,16 @@ import json
 import pymysql
 
 import lib.logic_json as lj
+import lib.logic_main as lm
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('etemp_dashboard.html')
+
+    costs = lm.addCostsTotal()
+
+    return render_template('etemp_dashboard.html',costs=costs)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():
