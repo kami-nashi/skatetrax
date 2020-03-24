@@ -150,9 +150,9 @@ def addCostsTotal():
     eventsP = addEventsP()
     timeCoach = coachtimeAdd2()
 
-    total = (costEquip+costMaint[1]+costClass+eventsP+costClub+eventsC+costIce[1]+timeCoach)
+    total = (float(costEquip)+float(costMaint[1])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
 
-    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[1],total]
+    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
     return query
 
 ################################################################################################################
