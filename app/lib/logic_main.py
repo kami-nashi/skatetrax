@@ -152,7 +152,7 @@ def addCostsTotal():
 
     total = (costEquip+costMaint[1]+costClass+eventsP+costClub+eventsC+costIce[1]+timeCoach)
 
-    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach,total]
+    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[1],total]
     return query
 
 ################################################################################################################
