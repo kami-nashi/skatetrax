@@ -3,7 +3,7 @@
 //  $('#dataTable').DataTable();
 //});
 
-$.getJSON(apiUrl_sessionBrief, function(jsonFromFile) {
+$.getJSON(apiUrl_sessions, function(jsonFromFile) {
   $('#dataTable').bootstrapTable({
     data: jsonFromFile,
     "pagingType": "full_numbers"
