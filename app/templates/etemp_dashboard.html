@@ -11,40 +11,40 @@
         </thead>
         <tbody>
         <tr class="small">
-            <td class="text-right">${% costs[0] %}</td>
+            <td class="text-right">${{ costs[0] }}</td>
             <td class="text-left"> Equipment </td>
         </tr>
         <tr class="small">
-            <td class="text-right">${% costs[1] %}</td>
+            <td class="text-right">${{ costs[1] }}</td>
             <td class="text-left"> Maintenance </td>
         </tr>
         <tr class="small">
-            <td class="text-right">${% costs[2] %}</td>
+            <td class="text-right">${{ costs[2] }}</td>
             <td class="text-left"> Class Fees </td>
         </tr>
         <tr class="small">
-            <td class="text-right">${% costs[3] %}</td>
+            <td class="text-right">${{ costs[3] }}</td>
             <td class="text-left"> Performance Fees </td>
         </tr>
         <tr class="small">
-            <td class="text-right">${% costs[4] %}</td>
+            <td class="text-right">${{ costs[4] }}</td>
             <td class="text-left"> Membership Fees </td>
         </tr><tr class="small">
-            <td class="text-right">$<{% costs[5] %}/td>
+            <td class="text-right">$<{{ costs[5] }}/td>
             <td class="text-left"> Competition Fees </td>
         </tr>
         <tr class="small">
-            <td class="text-right">${% costs[6] %}</td>
+            <td class="text-right">${{ costs[6] }}</td>
             <td class="text-left"> Ice Time </td>
         </tr>
         <tr class="small">
-            <td class="text-right">${% costs[7] %}</td>
+            <td class="text-right">${{ costs[7] }}</td>
             <td class="text-left"> Coaching Cost </td>
         </tr>
         </tbody>
     </table>
               <h4>Total</h4>
-              <div class="text-muted">${% costs[8] %}</div></div>
+              <div class="text-muted">${{ costs[8] }}</div></div>
 
     <div class="col-4 col-sm-2 placeholder">
         <canvas id="pie-chart" width="250" height="250" style="display: block;"></canvas>
@@ -58,7 +58,7 @@
           datasets: [{
           label: "Totals",
           backgroundColor: ["#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850","#4cc5b7","#d816e0","#3d86e8"],
-          data: [{% costs[0] %},{% costs[1] %},{% costs[2] %},{% costs[3] %},{% costs[4] %},{% costs[5] %},{% costs[6] %},{% costs[7] %}]
+          data: [{{ costs[0] }},{{ costs[1] }},{{ costs[2] }},{{ costs[3] }},{{ costs[4] }},{{ costs[5] }},{{ costs[6] }},{{ costs[7] }}]
           }]
         },
         options: {
