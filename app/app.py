@@ -20,7 +20,7 @@ def index():
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
 
-    return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions)
+    return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0])
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():
