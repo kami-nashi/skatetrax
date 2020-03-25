@@ -1,0 +1,199 @@
+{% extends "template.html" %}
+
+{% block chart1 %}
+<div class="row">
+<div class="col-2 text-center">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Financial Overview </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">${{ costs[0] }}</td>
+            <td class="text-left"> Equipment </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">${{ costs[1] }}</td>
+            <td class="text-left"> Maintenance </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">${{ costs[2] }}</td>
+            <td class="text-left"> Class Fees </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">${{ costs[3] }}</td>
+            <td class="text-left"> Performance Fees </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">${{ costs[4] }}</td>
+            <td class="text-left"> Membership Fees </td>
+        </tr><tr class="small">
+            <td class="text-right">${{ costs[5] }}</td>
+            <td class="text-left"> Competition Fees </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">${{ costs[6] }}</td>
+            <td class="text-left"> Ice Time </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">${{ costs[7] }}</td>
+            <td class="text-left"> Coaching Cost </td>
+        </tr>
+        </tbody>
+    </table>
+    <h4>Total</h4>
+    <div class="text-muted">${{ costs[8] }}</div>
+</div>
+<div class="col-2">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Monthly Comparison by Hours </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">--</td>
+            <td class="text-left"> Hours Last Month </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">--</td>
+            <td class="text-left"> Hours This Month </td>
+        </tr>
+        </tbody>
+    </table>
+ </div>
+    <div class="col-2">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Punch Cards </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">--</td>
+            <td class="text-left"> Punches Used Out Of</td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">--</td>
+            <td class="text-left"> Punches Remaining </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-2">
+<canvas id="doughnut-chart" width="227" height="227" style="display: block; width: 227px; height: 227px;"></canvas>
+<script>
+new Chart(document.getElementById("doughnut-chart"), {
+    type: "doughnut",
+    data: {
+      labels: ["Coached", "Uncoached"],
+      datasets: [
+        {
+          label: "Training Hours",
+          backgroundColor: ["#3d86e8", "#d816e0"],
+          data: [{{ hours[1] }},{{ hours[0] }}]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: false,
+        text: "Amount of hours coached vs uncoached"
+      }
+    }
+});
+</script>
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Training Hours </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">{{ hours[1] }}</td>
+            <td class="text-left"> Coached Hours </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">{{ hours[0] }}</td>
+            <td class="text-left"> Uncoached Hours </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="col-2">
+<canvas id="doughnut-chart2" width="216" height="216" style="display: block; width: 216px; height: 216px;"></canvas>
+<script>
+new Chart(document.getElementById("doughnut-chart2"), {
+    type: "doughnut",
+    data: {
+      labels: ["Coached", "Uncoached"],
+      datasets: [
+        {
+          label: "Training Costs",
+          backgroundColor: ["#3d86e8", "#d816e0"],
+          data: [{{ costs[6] }},{{ costs[7] }}]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: false,
+        text: "Amount of dollars coached vs uncoached"
+      }
+    }
+});
+</script>
+
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Training Budget </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">{{ costs[6] }}</td>
+            <td class="text-left"> Coached </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">{{ costs[7] }}</td>
+            <td class="text-left"> Uncoached </td>
+        </tr>
+        </tbody>
+    </table>
+</div></div>
+
+
+{%endblock%}
+
+
+{% block chart_body %}
+<div>
+    <canvas id="myAreaChart" width="665" height="199" class="chartjs-render-monitor" style="display: block; width: 665px; height: 199px;"></canvas>
+</div>
+<table class="table table-striped"> <thead>
+<tr><td>Date</td><td>Skate Time</td><td>Ice Cost</td><td>Skate Type</td><td>Coach Time</td><td>Coach Name</td><td>Coach Rate</td><td>Journal</td><td>Rink Name</td><td>City</td><td>State</td></tr>
+</thead><tbody>
+
+{% for i in chart_body %}
+
+<tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['skate_type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> -- </td><td> -- </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
+
+{% endfor %}
+
+</tbody>
+</div>
+{% endblock %}
+
+{% block chart_js %}
+<script> var apiUrl_sessions="/api/json/sessionsFull";</script>
+<script src="js/session_chart.js"></script>
+
+
+{% endblock %}

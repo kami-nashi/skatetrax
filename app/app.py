@@ -14,13 +14,19 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-
     costs = lm.addCostsTotal()
     hours = lm.addHoursTotal()
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
-
     return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0])
+
+@app.route("/ice_time")
+def iceTime():
+    costs = lm.addCostsTotal()
+    hours = lm.addHoursTotal()
+    maint = lm.maintenance()
+    sessions = lm.sessionsFull()
+    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0])
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():
