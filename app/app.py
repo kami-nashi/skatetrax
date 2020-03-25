@@ -16,8 +16,11 @@ app = Flask(__name__)
 def index():
 
     costs = lm.addCostsTotal()
+    hours = lm.addHoursTotal()
+    maint = lm.maintenance()
+    sessions = lm.sessionsBrief()
 
-    return render_template('etemp_dashboard.html',costs=costs)
+    return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():

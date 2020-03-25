@@ -74,9 +74,7 @@ def coachtimeAdd2():
     return query
 
 ###############################################################
-#
 #  Maintenance Stuff
-#
 ###############################################################
 
 def maintenance():
@@ -88,7 +86,7 @@ def maintenance():
         mHours += i['m_hours_on']
         mCost += i['m_cost']
     iceTimeTotal = icetimeAdd()
-    mOn = iceTimeTotal[1] - mHours
+    mOn = (float(iceTimeTotal[0])-float(mHours))
     mRemaining = 21 - mOn
     query = [mHours,mCost,mOn,mRemaining]
     return query
@@ -149,12 +147,22 @@ def addCostsTotal():
     eventsC = addEventsC()
     eventsP = addEventsP()
     timeCoach = coachtimeAdd2()
-
     total = (float(costEquip)+float(costMaint[1])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
-
     query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
     return query
 
+def addHoursTotal():
+    hoursPract = icetimeAdd()
+    hoursCoach = coachtimeAdd2()
+
+    results = [hoursPract[0],hoursCoach[1]]
+    return results
+
+def sessionsBrief():
+    sql = 'select * from ice_time, coaches, locations, ice_type where ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date > (NOW() - INTERVAL 14 DAY) ORDER BY date DESC';
+    results = dbconnect(sql)
+
+    return results
 ################################################################################################################
 ##						Calculate Punch Cards					      ##
 ################################################################################################################

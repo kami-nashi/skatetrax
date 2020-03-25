@@ -30,7 +30,7 @@
             <td class="text-right">${{ costs[4] }}</td>
             <td class="text-left"> Membership Fees </td>
         </tr><tr class="small">
-            <td class="text-right">$<{{ costs[5] }}/td>
+            <td class="text-right">${{ costs[5] }}</td>
             <td class="text-left"> Competition Fees </td>
         </tr>
         <tr class="small">
@@ -84,8 +84,8 @@ new Chart(document.getElementById("doughnut-chart"), {
       datasets: [
         {
           label: "Training Hours",
-          backgroundColor: ["#3e95cd", "#8e5ea2"],
-          data: [33,123.5]
+          backgroundColor: ["#3d86e8", "#d816e0"],
+          data: [{{ hours[1] }},{{ hours[0] }}]
         }
       ]
     },
@@ -105,11 +105,11 @@ new Chart(document.getElementById("doughnut-chart"), {
         </thead>
         <tbody>
         <tr class="small">
-            <td class="text-right">33.00</td>
+            <td class="text-right">{{ hours[1] }}</td>
             <td class="text-left"> Coached Hours </td>
         </tr>
         <tr class="small">
-            <td class="text-right">123.50</td>
+            <td class="text-right">{{ hours[0] }}</td>
             <td class="text-left"> Uncoached Hours </td>
         </tr>
         </tbody>
@@ -129,8 +129,8 @@ new Chart(document.getElementById("doughnut-chart2"), {
       datasets: [
         {
           label: "Hours Overview",
-          backgroundColor: ["#009900", "#70db70"],
-          data: [5,16]
+          backgroundColor: ["#70db70", "#009900"],
+          data: [{{ maint[2] }},{{ maint[3] }}]
         }
       ]
     },
@@ -151,11 +151,11 @@ new Chart(document.getElementById("doughnut-chart2"), {
         </thead>
         <tbody>
         <tr class="small">
-            <td class="text-right">5.00</td>
+            <td class="text-right">{{ maint[2] }}</td>
             <td class="text-left"> Current Hours </td>
         </tr>
         <tr class="small">
-            <td class="text-right">16.00</td>
+            <td class="text-right">{{ maint[3] }}</td>
             <td class="text-left"> Hours Remaining </td>
         </tr>
         </tbody>
@@ -167,9 +167,19 @@ new Chart(document.getElementById("doughnut-chart2"), {
 
 
 {% block chart_body %}
-<div class="card mb-3">
+<div>
 
-          </div>
+<table class="table table-striped"> <thead>
+<tr><td>Date</td><td>Skate Time</td><td>Ice Cost</td><td>Skate Type</td><td>Coach Time</td><td>Coach Name</td><td>Coach Rate</td><td>Journal</td><td>Rink Name</td><td>City</td><td>State</td></tr>
+</thead><tbody> {{ chart_body }}
+{% for i in chart_body %}
+
+<tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['skate_type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> -- </td><td> -- </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
+
+{% endfor %}
+
+</tbody>
+</div>
 {% endblock %}
 
 {% block chart_js %}
