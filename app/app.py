@@ -26,7 +26,18 @@ def iceTime():
     hours = lm.addHoursTotal()
     maint = lm.maintenance()
     sessions = lm.sessionsFull()
-    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0])
+    hLast = float(lm.icetimeLast())
+    hCurrent = float(lm.icetimeCurrent())
+    hStatus = "normal"
+    if hCurrent >= hLast:
+        hStatus = "text-success"
+    elif hCurrent < hLast:
+        hStatus = "text-danger"
+    else:
+        hStatus = "normal"
+    hResults = [hLast,hCurrent,hStatus]
+
+    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():

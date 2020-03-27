@@ -25,7 +25,7 @@ var getJSON = function(url, callback) {
   xhr.send();
 };
 
-getJSON(api_url, function(err, data) {
+getJSON(apiUrl_sessions, function(err, data) {
   if (err !== null) {
     alert('Something went wrong: ' + err);
   } else {

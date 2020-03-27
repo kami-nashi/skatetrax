@@ -55,11 +55,11 @@
         </thead>
         <tbody>
         <tr class="small">
-            <td class="text-right">--</td>
+            <td class="text-right">{{ hStatus[0] }}</td>
             <td class="text-left"> Hours Last Month </td>
         </tr>
         <tr class="small">
-            <td class="text-right">--</td>
+            <td class="text-right {{ hStatus[2] }}">{{ hStatus[1] }}</td>
             <td class="text-left"> Hours This Month </td>
         </tr>
         </tbody>
@@ -183,7 +183,7 @@ new Chart(document.getElementById("doughnut-chart2"), {
 
 {% for i in chart_body %}
 
-<tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['skate_type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> -- </td><td> -- </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
+<tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> -- </td><td> {{ i['has_video']}} </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
 
 {% endfor %}
 
@@ -193,7 +193,8 @@ new Chart(document.getElementById("doughnut-chart2"), {
 
 {% block chart_js %}
 <script> var apiUrl_sessions="/api/json/sessionsFull";</script>
-<script src="js/session_chart.js"></script>
+<script src="{{ url_for('static', filename='js/session_chart.js') }}"></script>
+
 
 
 {% endblock %}
