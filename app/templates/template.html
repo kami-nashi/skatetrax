@@ -24,6 +24,8 @@
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin.css') }}" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
   </head>
 
   <body id="page-top">
@@ -46,8 +48,12 @@
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
           </div>
-        </li>
+          </li>
+          <li class="nav-item"><button class="btntxt" data-modal="modalOne">Update Time</button></li>
+          <li class="nav-item"><button class="btntxt" data-modal="modalTwo">Add Maintenance</button></li>
       </ul>
+   </div>
+</div>
     </nav>
     <div id="wrapper">
       <!-- Sidebar -->
@@ -59,7 +65,61 @@
       </ul>
 
       <div id="content-wrapper">
+       <div id="modalOne" class="modal" style="display: none;">
+       <div class="modal-content">
+       <div class="modal-header">
+       <h2>Add Session Time</h2>
+       <span class="close">×</span>
+       </div>
+       <div>
+       <form action='#' method='POST'><div class="navbar navbar-expand static-top">
+         <span class="px-2"> Date: <input size='8' type='text' name='date' id='date' value="{{ calDate }}"/></span>
+          <span class="px-2"> Ice Time: <input size='4' type='text' name='ice_time' id='ice_time'/></span>
+          <span class="px-2"> Ice Cost: <input size='6' type='text' name='ice_cost' id='ice_cost'/></span>
+          <span class="px-2"> Skate Type: <select name="skate_type">
+          {% for i in modal1[2] %}
+              "<option value="{{ i['id'] }}">{{ i['type'] }}</option>"
+          {% endfor %}
+          </select>
+          </span>
+          <span class="px-2"> Rink Location: <select name="location">
+          {% for i in modal1[1] %}
+              "<option value="{{ i['id'] }}">{{ i['location_id'] }}</option>"
+          {% endfor %}
+          </select></span>
+          <span class="px-2"> Coach: <select name="coach">
+          {% for i in modal1[0] %}
+              "<option value="{{ i['id'] }}">{{ i['coach_fname'] }} {{ i['coach_lname'] }}</option>"
+          {% endfor %}
+          </select>
+          </span class="px-2"><span> Coach Time: <input size='4' type='text' name='coach_time' id='coach_time'value="0"/></span>
+         <span class="px-2"><input type="submit" class="btntxt" value="Add Time"></span>
+       </div>
+       </div>
+       </div>
+      </div>
+       <div id="modalTwo" class="modal" style="display: none;">
+       <div class="modal-content">
+       <div class="modal-header">
+       <h2>Add Session Time</h2>
+       <span class="close">×</span>
+       </div>
+       <div>
+          <form action='#' method='POST'><div class="navbar navbar-expand static-top">
+          <span class="px-2"> Date: <input size='8' type='text' name='m_date' id='m_date' value="{{ calDate }}"/></span>
+          <span class="px-2"> Hours On: <input size='4' type='text' name='m_hours_on' id='m_hours_on'/></span>
+          <span class="px-2"> Maintenance Cost: <input size='6' type='text' name='m_cost' id='m_cost'/></span>
+          <span class="px-2"> Skate Type: <select name="skate_type">
+          {% for i in modal1[1] %}
+              "<option value="{{ i['id'] }}">{{ i['location_id'] }}</option>"
+          {% endfor %}
+          </select></span>
+              <span class="px-2"><input type="submit" class="btntxt" value="Add Time"></span></div>
+       </form>
 
+       </div>
+       </div>
+      </div>
         <div class="container-fluid">
 
           <!-- Breadcrumbs-->
@@ -138,7 +198,6 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ url_for('static', filename='js/sb-admin.min.js') }}"></script>
-
     <!-- Demo scripts for this page-->
 
    {% block chart_js %}{% endblock %}

@@ -6,12 +6,15 @@ from flask import request
 
 import json
 import pymysql
+import datetime
 
 import lib.logic_json as lj
 import lib.logic_main as lm
 
 app = Flask(__name__)
 
+# Global Stuff
+now = datetime.date.today()
 
 @app.route("/")
 def index():
@@ -19,7 +22,8 @@ def index():
     hours = lm.addHoursTotal()
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
-    return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0])
+    modalSessions = lj.sessionModal()
+    return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now)
 
 @app.route("/ice_time")
 def iceTime():
@@ -37,8 +41,9 @@ def iceTime():
     else:
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
+    modalSessions = lj.sessionModal()
 
-    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults)
+    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, modal1=modalSessions, calDate=now)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():

@@ -23,3 +23,30 @@ def sessionsBrief():
         dump.append({'id':i['id'],'date':i['date'],'ice_time':i['ice_time'],'ice_cost':i['ice_cost'],'skate_type':i['skate_type'],'coach_time':i['coach_time'],'coach_id':i['coach_id'],'rink_id':i['rink_id'],'has_video':i['has_video'],'has_notes':i['has_notes'],'coach_fname':i['coach_fname'],'coach_lname':i['coach_lname'],'coach_rate':i['coach_rate'],'location_id':i['location_id'],'location_city':i['location_city'],'location_state':i['location_state'],'type':i['type']})
     jdump = json.dumps(dump, indent=4, default=str)
     return jdump
+
+def sessionModal():
+    sqlCoach = 'select * from coaches'
+    sqlRink = 'select * from locations'
+    sqlType = 'select * from ice_type'
+
+    rCoach = st.dbconnect(sqlCoach)
+    rRink = st.dbconnect(sqlRink)
+    rType = st.dbconnect(sqlType)
+
+    results = [rCoach,rRink,rType]
+    #for i in results[0]:
+    #    print(i['coach_fname'])
+    return results
+
+    #for i in ice_type:
+    #   #unset($id, $type);
+    #   id = i['id']
+    #   type = i['type']
+    #for i in result:
+    #   #unset($id, $name);
+    #   id = i['id']
+    #   fname = i['coach_fname']
+    #for i in other_result:
+    #   #unset($id, $location_id);
+    #   id = i['id']
+    #   location_id = i['location_id']

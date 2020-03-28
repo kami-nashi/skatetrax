@@ -191,3 +191,23 @@ def punchCard():
     for i in results:
         punchTotal += i['punch_time']
     return punchTotal
+
+def modalSessions():
+    sql_coach = 'select * from coaches'
+    sql_rink = 'select * from locations'
+    sql_itype = 'select * from ice_type'
+    result = dbconnect(sql_coach)
+    other_result = dbconnect(sql_rink)
+    ice_type = dbconnect(sql_itype)
+    for i in ice_type:
+       #unset($id, $type);
+       id = i['id']
+       type = i['type']
+    for i in result:
+       #unset($id, $name);
+       id = i['id']
+       fname = i['coach_fname']
+    for i in other_result:
+       #unset($id, $location_id);
+       id = i['id']
+       location_id = i['location_id']
