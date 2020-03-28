@@ -3,6 +3,7 @@ from flask import render_template
 from flask import jsonify
 from flask import Response
 from flask import request
+from flask import redirect
 
 import json
 import pymysql
@@ -58,6 +59,41 @@ def sessionsBrief():
     jsession = json.dumps(session, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
+
+
+@app.route('/submit_modalSession', methods=['POST'])
+def submit_modalSession():
+    if request.method == 'POST':
+        iceDate = request.form['date']
+        iceTime = request.form['ice_time']
+        iceCost = request.form['ice_cost']
+        iceType = request.form['skate_type']
+        iceLoc = request.form['location']
+        iceCoach = request.form['coach']
+        coachTime = request.form['coach_time']
+
+        sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id)values(%s, %s, %s, %s, %s, %s, %s) """
+        recordTuple = (iceDate,iceTime,iceCost,iceType,iceLoc,iceCoach,coachTime)
+        lm.dbinsert(sql, recordTuple)
+        return redirect(request.referrer)
+    else:
+        redirect(request.referrer)
+
+@app.route('/submit_modalMaintenance', methods=['POST'])
+def submit_modalMaintenance():
+    if request.method == 'POST':
+        mDate = request.form['m_date']
+        mOn = request.form['m_hours_on']
+        mCost = request.form['m_cost']
+        mRink = request.form['rink_id']
+        mLocation = request.form['location']
+
+        sql = """insert into maintenance(m_date,m_hours_on,m_cost,rink_id)values(%s, %s, %s, %s, %s) """
+        recordTuple = (mDate,mOn,mCost,mRink,mLocation)
+        lm.dbinsert(sql, recordTuple)
+        return redirect(request.referrer)
+    else:
+        redirect(request.referrer)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, use_reloader=True, debug=True)

@@ -18,6 +18,21 @@ def dbconnect(sql):
    con.close()
    return tables
 
+def dbinsert(sql,recordTuple):
+   configParser = conf.RawConfigParser()
+   configFilePath = r'/etc/skatetrax/settings.conf'
+   configParser.read(configFilePath)
+   host = configParser.get('dbconf', 'host')
+   user = configParser.get('dbconf', 'user')
+   password = configParser.get('dbconf', 'password')
+   db = configParser.get('dbconf', 'db')
+   con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
+   cur = con.cursor()
+   cur.execute(sql, recordTuple)
+   tables = cur.fetchall()
+   con.close()
+   return tables
+
 # Sums hours of current month
 def icetimeCurrent():
     sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date)'
