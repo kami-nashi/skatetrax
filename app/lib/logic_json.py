@@ -28,25 +28,9 @@ def sessionModal():
     sqlCoach = 'select * from coaches'
     sqlRink = 'select * from locations'
     sqlType = 'select * from ice_type'
-
     rCoach = st.dbconnect(sqlCoach)
     rRink = st.dbconnect(sqlRink)
     rType = st.dbconnect(sqlType)
-
     results = [rCoach,rRink,rType]
-    #for i in results[0]:
-    #    print(i['coach_fname'])
-    return results
 
-    #for i in ice_type:
-    #   #unset($id, $type);
-    #   id = i['id']
-    #   type = i['type']
-    #for i in result:
-    #   #unset($id, $name);
-    #   id = i['id']
-    #   fname = i['coach_fname']
-    #for i in other_result:
-    #   #unset($id, $location_id);
-    #   id = i['id']
-    #   location_id = i['location_id']
+    return results

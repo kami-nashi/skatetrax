@@ -30,6 +30,7 @@ def dbinsert(sql,recordTuple):
    cur = con.cursor()
    cur.execute(sql, recordTuple)
    tables = cur.fetchall()
+   cur.connection.commit()
    con.close()
    return tables
 

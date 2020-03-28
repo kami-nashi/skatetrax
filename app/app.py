@@ -77,7 +77,7 @@ def submit_modalSession():
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:
-        redirect(request.referrer)
+        return redirect(request.referrer)
 
 @app.route('/submit_modalMaintenance', methods=['POST'])
 def submit_modalMaintenance():
@@ -85,15 +85,14 @@ def submit_modalMaintenance():
         mDate = request.form['m_date']
         mOn = request.form['m_hours_on']
         mCost = request.form['m_cost']
-        mRink = request.form['rink_id']
-        mLocation = request.form['location']
+        mLocation = request.form['locationID']
 
-        sql = """insert into maintenance(m_date,m_hours_on,m_cost,rink_id)values(%s, %s, %s, %s, %s) """
-        recordTuple = (mDate,mOn,mCost,mRink,mLocation)
+        sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location)values(%s, %s, %s, %s) """
+        recordTuple = (mDate,mOn,mCost,mLocation)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:
-        redirect(request.referrer)
+        return redirect(request.referrer)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, use_reloader=True, debug=True)

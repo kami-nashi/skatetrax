@@ -93,7 +93,7 @@
           {% endfor %}
           </select>
           </span class="px-2"><span> Coach Time: <input size='4' type='text' name='coach_time' id='coach_time'value="0"/></span>
-         <span class="px-2"><input type="submit" class="btntxt" value="Add Time"></span>
+         <span class="px-2"><input type="submit" class="btntxt" value="Add Time"></span></form>
        </div>
        </div>
        </div>
@@ -109,7 +109,7 @@
           <span class="px-2"> Date: <input size='8' type='text' name='m_date' id='m_date' value="{{ calDate }}"/></span>
           <span class="px-2"> Hours On: <input size='4' type='text' name='m_hours_on' id='m_hours_on'/></span>
           <span class="px-2"> Maintenance Cost: <input size='6' type='text' name='m_cost' id='m_cost'/></span>
-          <span class="px-2"> Skate Type: <select name="skate_type">
+          <span class="px-2"> Shop Location: <select name="locationID">
           {% for i in modal1[1] %}
               "<option value="{{ i['id'] }}">{{ i['location_id'] }}</option>"
           {% endfor %}
