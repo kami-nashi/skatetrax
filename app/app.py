@@ -12,6 +12,7 @@ import lib.logic_main as lm
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
     costs = lm.addCostsTotal()
