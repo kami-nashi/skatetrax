@@ -1,0 +1,82 @@
+{% extends "template.html" %}
+
+{% block chart1 %}
+<div class="row">
+<div class="col-2 text-center">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Maintenance Cost: </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">${{ costs[1] }}</td>
+            <td class="text-left"> Maintenance </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-2">
+    <table class="table table" style="width:auto;" align="center">
+        <thead>
+        <tr>
+            <th colspan="2" class="text-center"> Maintenance Hours </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="small">
+            <td class="text-right">{{ maint[2] }}</td>
+            <td class="text-left"> Hours Currently </td>
+        </tr>
+        <tr class="small">
+            <td class="text-right">{{ maint[3] }}</td>
+            <td class="text-left"> Hours Remaining </td>
+        </tr>
+        </tbody>
+    </table>
+ </div>
+<div class="col-2">
+<canvas id="doughnut-chart2" width="216" height="216" style="display: block; width: 216px; height: 216px;"></canvas>
+<script>
+new Chart(document.getElementById("doughnut-chart2"), {
+    type: "doughnut",
+    data: {
+      labels: ["Hours Currently", "Hours Remaining"],
+      datasets: [
+        {
+          label: "Maintenance Costs",
+          backgroundColor: ["#70db70", "#009900"],
+          data: [{{ maint[2] }},{{ maint[3] }}]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: false,
+        text: "Hours Clock"
+      }
+    }
+});
+</script>
+</div></div>
+
+
+{%endblock%}
+
+
+{% block chart_body %}
+<div>
+    <canvas id="myAreaChart" width="665" height="199" class="chartjs-render-monitor" style="display: block; width: 665px; height: 199px;"></canvas>
+</div>
+<table class="table table-striped"> <thead>
+<tr><td>Date</td><td>Hours On</td><td>Maintenance Cost</td><td> Shop Name </td><td>City</td><td>State</td></tr>
+</thead><tbody>
+
+{% for i in maintTable %}
+    <tr><td> {{i['m_date']}} </td><td>  {{i['m_hours_on']}}  </td><td> {{i['m_cost']}} </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}}</td><td>
+{% endfor %}
+
+</tbody>
+</div>
+{% endblock %}

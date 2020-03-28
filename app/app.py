@@ -26,6 +26,16 @@ def index():
     modalSessions = lj.sessionModal()
     return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now)
 
+@app.route("/maintenance")
+def maintenance():
+    costs = lm.addCostsTotal()
+    hours = lm.addHoursTotal()
+    maint = lm.maintenance()
+    sessions = lm.sessionsBrief()
+    modalSessions = lj.sessionModal()
+    maintTable = lm.maintTable()
+    return render_template('etemp_maintenance.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now,maintTable=maintTable)
+
 @app.route("/ice_time")
 def iceTime():
     costs = lm.addCostsTotal()

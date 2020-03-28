@@ -107,6 +107,11 @@ def maintenance():
     query = [mHours,mCost,mOn,mRemaining]
     return query
 
+def maintTable():
+    sql = 'select * from maintenance, locations where maintenance.m_location = locations.id order by m_date desc'
+    query = dbconnect(sql)
+    return query
+
 def addTotals():
     ice = icetimeAdd()
     coach = coachtimeAdd2()
