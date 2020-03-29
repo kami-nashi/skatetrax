@@ -24,7 +24,6 @@ hours = lm.addHoursTotal()
 def index():
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
-    lm.punchCard()
     return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now)
 
 @app.route("/journal")
@@ -55,8 +54,9 @@ def iceTime():
     else:
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
+    pData = lm.punchCard()
 
-    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, modal1=modalSessions, calDate=now)
+    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, modal1=modalSessions, calDate=now, pData=pData)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():

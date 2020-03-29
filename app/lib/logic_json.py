@@ -6,8 +6,8 @@ def sessionsFull():
     results = st.dbconnect(sql)
     dump = []
     for i in results:
-            dump.append({'id': i['id'], 'date': i['date'], 'ice_time': i['ice_time'], 'ice_cost': i['ice_cost'],
-                         'skate_type': i['skate_type'], 'coach_time': i['coach_time'], 'coach_id': i['coach_id'],
+            dump.append({'id': i['id'], 'date': i['date'], 'ice_time': int(i['ice_time'])/60, 'ice_cost': i['ice_cost'],
+                         'skate_type': i['skate_type'], 'coach_time': int(i['coach_time'])/60, 'coach_id': i['coach_id'],
                          'rink_id': i['rink_id'], 'has_video': i['has_video'], 'has_notes': i['has_notes'],
                          'coach_fname': i['coach_fname'], 'coach_lname': i['coach_lname'],
                          'coach_rate': i['coach_rate'], 'location_id': i['location_id'],

@@ -50,7 +50,7 @@
     <table class="table table" style="width:auto;" align="center">
         <thead>
         <tr>
-            <th colspan="2" class="text-center"> Monthly Comparison by Hours </th>
+            <th colspan="2" class="text-center"> Monthly Comparison</th>
         </tr>
         </thead>
         <tbody>
@@ -65,25 +65,27 @@
         </tbody>
     </table>
  </div>
-    <div class="col-2">
+
+    <div class="col-3">
     <table class="table table" style="width:auto;" align="center">
-        <thead>
+
+{% for i in pData %}
+    {% if (i['rink'] == None or i['rink'] == '')%}
+    {% else %}
+    <thead>
         <tr>
-            <th colspan="2" class="text-center"> Punch Cards </th>
+           <th colspan="2" class="text-center"> {{ i['rink'] }} Punch Cards</th>
         </tr>
-        </thead>
-        <tbody>
+    </thead>
         <tr class="small">
-            <td class="text-right">--</td>
-            <td class="text-left"> Punches Used Out Of</td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">--</td>
-            <td class="text-left"> Punches Remaining </td>
+            <td class="text-center">{{ i['remainingPunches'] }} Punches Remaining ({{ i['punches_used'] }}/{{ i['punches_purchased'] }})</td>
         </tr>
         </tbody>
+    {% endif %}
+{% endfor %}
     </table>
 </div>
+
 <div class="col-2">
 <canvas id="doughnut-chart" width="227" height="227" style="display: block; width: 227px; height: 227px;"></canvas>
 <script>

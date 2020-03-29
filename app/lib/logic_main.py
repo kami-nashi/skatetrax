@@ -235,9 +235,10 @@ def punchCard():
         pPurchased = pTime/rinkPCST
         pUsed = iMinutes/rinkPCST
         pRemaining = (pTime - iMinutes)/rinkPCST
-        rData = {'punches_used': pUsed,'punches_purchased': pPurchased, 'remainingPunches': pRemaining,'cost': pCost, 'rink': rinkName}
+        rData = {'punches_used': int(pUsed),'punches_purchased': int(pPurchased), 'remainingPunches': int(pRemaining),'cost': pCost, 'rink': rinkName}
         rResults.append(rData)
     print(rResults)
+    return rResults
 
 
 def modalSessions():
