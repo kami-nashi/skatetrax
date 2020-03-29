@@ -16,30 +16,31 @@ app = Flask(__name__)
 
 # Global Stuff
 now = datetime.date.today()
+modalSessions = lj.sessionModal()
+costs = lm.addCostsTotal()
+hours = lm.addHoursTotal()
 
 @app.route("/")
 def index():
-    costs = lm.addCostsTotal()
-    hours = lm.addHoursTotal()
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
-    modalSessions = lj.sessionModal()
     return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now)
+
+@app.route("/journal")
+def journal():
+    modalSessions = lj.sessionModal()
+    jTable = lm.jVideos()
+    return render_template('etemp_journals.html', thour=hours[0], modal1=modalSessions, calDate=now, journalTable=jTable)
 
 @app.route("/maintenance")
 def maintenance():
-    costs = lm.addCostsTotal()
-    hours = lm.addHoursTotal()
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
-    modalSessions = lj.sessionModal()
     maintTable = lm.maintTable()
     return render_template('etemp_maintenance.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now,maintTable=maintTable)
 
 @app.route("/ice_time")
 def iceTime():
-    costs = lm.addCostsTotal()
-    hours = lm.addHoursTotal()
     maint = lm.maintenance()
     sessions = lm.sessionsFull()
     hLast = float(lm.icetimeLast())
@@ -52,7 +53,6 @@ def iceTime():
     else:
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
-    modalSessions = lj.sessionModal()
 
     return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, modal1=modalSessions, calDate=now)
 

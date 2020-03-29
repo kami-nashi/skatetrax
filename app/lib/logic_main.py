@@ -232,3 +232,8 @@ def modalSessions():
        #unset($id, $location_id);
        id = i['id']
        location_id = i['location_id']
+
+def jVideos():
+    sql = 'SELECT ice_time.*, j_videos.* FROM ice_time, j_videos WHERE ice_time.has_video = 1 AND ice_time.date = j_videos.date order by ice_time.date desc'
+    results = dbconnect(sql)
+    return results
