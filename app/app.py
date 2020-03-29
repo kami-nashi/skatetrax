@@ -24,6 +24,7 @@ hours = lm.addHoursTotal()
 def index():
     maint = lm.maintenance()
     sessions = lm.sessionsBrief()
+    lm.punchCard()
     return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now)
 
 @app.route("/journal")
@@ -79,12 +80,12 @@ def submit_modalSession():
         iceTime = request.form['ice_time']
         iceCost = request.form['ice_cost']
         iceType = request.form['skate_type']
-        iceLoc = request.form['location']
+        iceLoc = request.form['rLocation']
         iceCoach = request.form['coach']
         coachTime = request.form['coach_time']
 
         sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id)values(%s, %s, %s, %s, %s, %s, %s) """
-        recordTuple = (iceDate,iceTime,iceCost,iceType,iceLoc,iceCoach,coachTime)
+        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:

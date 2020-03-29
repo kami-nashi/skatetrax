@@ -1,5 +1,6 @@
 import pymysql
 import configparser as conf
+from collections import defaultdict
 
 def dbconnect(sql):
    configParser = conf.RawConfigParser()
@@ -11,10 +12,11 @@ def dbconnect(sql):
    password = configParser.get('dbconf', 'password')
    db = configParser.get('dbconf', 'db')
 
-   con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor)
+   con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
    cur = con.cursor()
    cur.execute(sql)
    tables = cur.fetchall()
+   cur.connection.commit()
    con.close()
    return tables
 
@@ -206,12 +208,37 @@ def skateTotal():
     return query
 
 def punchCard():
-    punchTotal = 0
-    sql = 'SELECT * FROM ice_punch'
+    sql = 'select distinct punch_location from ice_punch'
     results = dbconnect(sql)
+    rData = {}
+    rResults = []
     for i in results:
-        punchTotal += i['punch_time']
-    return punchTotal
+        pTime = 0
+        pCost = 0
+        rinkId = str(i['punch_location'])
+        pSql = 'select * from ice_punch where punch_location = ' + rinkId
+        pResults = dbconnect(pSql)
+        for z in pResults:
+            pTime += z['punch_time']
+            pCost += z['punch_cost']
+            iceSql = 'select * from ice_time, locations where locations.id = ice_time.rink_id and skate_type = 8 and rink_id = '+ rinkId
+        iResults = dbconnect(iceSql)
+        iCost = 0
+        iMinutes  = 0
+        rinkName = ''
+        for x in iResults:
+            iCost += x['ice_cost']
+            iMinutes += x['ice_time']
+            rinkName = x['location_id']
+            rinkPCST = x['pcs_time']
+            rinkPunch = int(iMinutes)/int(rinkPCST)
+        pPurchased = pTime/rinkPCST
+        pUsed = iMinutes/rinkPCST
+        pRemaining = (pTime - iMinutes)/rinkPCST
+        rData = {'punches_used': pUsed,'punches_purchased': pPurchased, 'remainingPunches': pRemaining,'cost': pCost, 'rink': rinkName}
+        rResults.append(rData)
+    print(rResults)
+
 
 def modalSessions():
     sql_coach = 'select * from coaches'
@@ -221,15 +248,12 @@ def modalSessions():
     other_result = dbconnect(sql_rink)
     ice_type = dbconnect(sql_itype)
     for i in ice_type:
-       #unset($id, $type);
        id = i['id']
        type = i['type']
     for i in result:
-       #unset($id, $name);
        id = i['id']
        fname = i['coach_fname']
     for i in other_result:
-       #unset($id, $location_id);
        id = i['id']
        location_id = i['location_id']
 
@@ -239,5 +263,4 @@ def jVideos(jv):
     else:
         sql = "SELECT * FROM j_videos WHERE date = '" + str(jv) + "'"
     results = dbconnect(sql)
-    print(sql)
     return results
