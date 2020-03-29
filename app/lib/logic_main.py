@@ -233,7 +233,11 @@ def modalSessions():
        id = i['id']
        location_id = i['location_id']
 
-def jVideos():
-    sql = 'SELECT ice_time.*, j_videos.* FROM ice_time, j_videos WHERE ice_time.has_video = 1 AND ice_time.date = j_videos.date order by ice_time.date desc'
+def jVideos(jv):
+    if jv == 0:
+        sql = 'SELECT ice_time.*, j_videos.* FROM ice_time, j_videos WHERE ice_time.has_video = 1 AND ice_time.date = j_videos.date order by ice_time.date desc'
+    else:
+        sql = "SELECT * FROM j_videos WHERE date = '" + str(jv) + "'"
     results = dbconnect(sql)
+    print(sql)
     return results

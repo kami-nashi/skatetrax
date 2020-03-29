@@ -28,8 +28,9 @@ def index():
 
 @app.route("/journal")
 def journal():
-    modalSessions = lj.sessionModal()
-    jTable = lm.jVideos()
+    #jv = '2018-12-30'
+    #jvDate = datetime.date(*map(int, jv.split('-')))
+    jTable = lm.jVideos(jv=0)
     return render_template('etemp_journals.html', thour=hours[0], modal1=modalSessions, calDate=now, journalTable=jTable)
 
 @app.route("/maintenance")
