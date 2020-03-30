@@ -237,9 +237,7 @@ def punchCard():
         pRemaining = (pTime - iMinutes)/rinkPCST
         rData = {'punches_used': int(pUsed),'punches_purchased': int(pPurchased), 'remainingPunches': int(pRemaining),'cost': pCost, 'rink': rinkName}
         rResults.append(rData)
-    print(rResults)
     return rResults
-
 
 def modalSessions():
     sql_coach = 'select * from coaches'

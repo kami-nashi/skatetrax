@@ -55,7 +55,6 @@ def iceTime():
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
     pData = lm.punchCard()
-
     return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, modal1=modalSessions, calDate=now, pData=pData)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
