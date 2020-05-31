@@ -68,7 +68,7 @@ new Chart(document.getElementById("doughnut-chart2"), {
 {% block chart_body %}
 <div>
     <canvas id="myAreaChart" width="665" height="199" class="chartjs-render-monitor" style="display: block; width: 665px; height: 199px;"></canvas>
-</div>
+</div><div class="card-footer small text-muted">Session Table</div>
 <table class="table table-striped"> <thead>
 <tr><td>Date</td><td>Hours On</td><td>Maintenance Cost</td><td> Shop Name </td><td>City</td><td>State</td></tr>
 </thead><tbody>
@@ -78,5 +78,5 @@ new Chart(document.getElementById("doughnut-chart2"), {
 {% endfor %}
 
 </tbody>
-</div>
+
 {% endblock %}
