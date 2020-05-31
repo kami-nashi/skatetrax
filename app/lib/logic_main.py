@@ -62,7 +62,7 @@ def icetimeLast():
 def icetimeAdd():
     ice = 0
     ice_cost = 0
-    sql = 'select * from ice_time'
+    sql = 'select * from ice_time where skate_type != 9'
     results = dbconnect(sql)
     for i in results:
         ice += i['ice_time']
