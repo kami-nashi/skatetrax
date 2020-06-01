@@ -53,15 +53,31 @@ def iceTime():
     hLast = float(lm.icetimeLast())
     hCurrent = float(lm.icetimeCurrent())
     hStatus = "normal"
-    if hCurrent >= hLast:
+    if hCurrent > hLast:
         hStatus = "text-success"
     elif hCurrent < hLast:
+        hStatus = "text-danger"
+    elif hCurrent == 0:
         hStatus = "text-danger"
     else:
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
+
+    inlineLast = float(lm.inlinetimeLast())
+    inlineCurrent = float(lm.inlinetimeCurrent())
+    inlineStatus = "normal"
+    if inlineCurrent > inlineLast:
+        inlineStatus = "text-success"
+    elif inlineCurrent < inlineLast:
+        inlineStatus = "text-danger"
+    elif inlineCurrent == 0:
+        inlineStatus = "text-danger"
+    else:
+        inlineStatus = "normal"
+    inlineResults = [inlineLast,inlineCurrent,inlineStatus]
+
     pData = lm.punchCard()
-    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, modal1=modalSessions, calDate=now, pData=pData)
+    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, inlineStatus=inlineResults, modal1=modalSessions, calDate=now, pData=pData)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():

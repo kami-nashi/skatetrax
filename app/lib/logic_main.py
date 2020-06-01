@@ -36,9 +36,9 @@ def dbinsert(sql,recordTuple):
    con.close()
    return tables
 
-# Sums hours of current month
+# Sums ice hours of current month
 def icetimeCurrent():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date)'
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and skate_type != 10'
     results = dbconnect(sql)
     current = int(0)
     for i in results:
@@ -47,9 +47,31 @@ def icetimeCurrent():
     ice_hours = current/60
     return ice_hours
 
-# Sums hours from previous month
+# Sums ice hours from previous month
 def icetimeLast():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date)'
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and skate_type != 10'
+    results = dbconnect(sql)
+    current = int(0)
+    for i in results:
+        current += i['ice_time']
+    # Math - convert minutes to hours
+    ice_hours = current/60
+    return ice_hours
+
+# Sums inline hours of current month
+def inlinetimeCurrent():
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or skate_type = 10'
+    results = dbconnect(sql)
+    current = int(0)
+    for i in results:
+        current += i['ice_time']
+    # Math - convert minutes to hours
+    ice_hours = current/60
+    return ice_hours
+
+# Sums inline hours from previous month
+def inlinetimeLast():
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or skate_type = 10'
     results = dbconnect(sql)
     current = int(0)
     for i in results:

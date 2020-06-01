@@ -46,11 +46,11 @@
     <h4>Total</h4>
     <div class="text-muted">${{ costs[8] }}</div>
 </div>
-<div class="col-2">
+<div class="col-3">
     <table class="table table" style="width:auto;" align="center">
         <thead>
         <tr>
-            <th colspan="2" class="text-center"> Monthly Comparison</th>
+            <th colspan="2" class="text-center">Ice Time (Current vs Previous)</th>
         </tr>
         </thead>
         <tbody>
@@ -64,8 +64,25 @@
         </tr>
         </tbody>
     </table>
- </div>
 
+     <table class="table table" style="width:auto;" align="center">
+         <thead>
+         <tr>
+             <th colspan="2" class="text-center">Inline Time (Current vs Previous)</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr class="small">
+             <td class="text-right">{{ inlineStatus[0] }}</td>
+             <td class="text-left"> Hours Last Month </td>
+         </tr>
+         <tr class="small">
+             <td class="text-right {{ hStatus[2] }}">{{ inlineStatus[1] }}</td>
+             <td class="text-left"> Hours This Month </td>
+         </tr>
+         </tbody>
+     </table>
+  </div>
     <div class="col-3">
     <table class="table table" style="width:auto;" align="center">
 
