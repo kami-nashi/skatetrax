@@ -33,6 +33,12 @@ def journal():
     jTable = lm.jVideos(jv=0)
     return render_template('etemp_journals.html', thour=hours[0], modal1=modalSessions, calDate=now, journalTable=jTable)
 
+@app.route("/skater_overview")
+def skater_overview():
+    sOff = lm.skaterOffBlades()
+    sIce = lm.skaterIceBlades()
+    return render_template('etemp_skater_overview.html', thour=hours[0], modal1=modalSessions, skateOff=sOff, skateIce=sIce)
+
 @app.route("/maintenance")
 def maintenance():
     maint = lm.maintenance()
