@@ -93,6 +93,17 @@ def icetimeAdd():
     query = [ice_time,ice_cost]
     return query
 
+def inlinetimeAdd():
+    ice = 0
+    ice_cost = 0
+    sql = 'select * from ice_time where skate_type = 9 or skate_type = 10'
+    results = dbconnect(sql)
+    for i in results:
+        ice += i['ice_time']
+    ice_time = ice / 60
+    query = ice_time
+    return query
+
 # Good luck figuring this one out. Sigh.
 def coachtimeAdd2():
     coachTime = 0

@@ -28,9 +28,12 @@ def index():
 
 @app.route("/journal")
 def journal():
-    #jv = '2018-12-30'
-    #jvDate = datetime.date(*map(int, jv.split('-')))
-    jTable = lm.jVideos(jv=0)
+    jDate = request.args.get('date', default = '', type = str)
+    if jDate == '':
+        jTable = lm.jVideos(jv=0)
+    else:
+        print(jDate, 'its not empty')
+        jTable = lm.jVideos(jDate)
     return render_template('etemp_journals.html', thour=hours[0], modal1=modalSessions, calDate=now, journalTable=jTable)
 
 @app.route("/skater_overview")
