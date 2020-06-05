@@ -200,13 +200,18 @@ new Chart(document.getElementById("doughnut-chart2"), {
 <tr><td>Date</td><td>Skate Time</td><td>Ice Cost</td><td>Skate Type</td><td>Coach Time</td><td>Coach Name</td><td>Coach Rate</td><td>Journal</td><td>Rink Name</td><td>City</td><td>State</td></tr>
 </thead><tbody>
 
-{% for i in chart_body %}
-    {%- if i['has_video'] == 1 %}
-    <tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> -- </td><td> <a href="/journal?date={{i['date']}}"><img src="{{ url_for('static', filename='images/filmreel.png') }}" style="width:32px;height:32px;"></a></td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
-    {% else %}
-    <tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> -- </td><td> -- </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
-    {% endif %}
-{% endfor %}
+  {% for i in chart_body %}
+      {% if i['coach_rate'] == 0 %}
+      {%- set cRate = '--' %}
+      {%- else %}
+      {%- set cRate = i['coach_rate'] %}
+      {% endif %}
+      {%- if i['has_video'] == 1 %}
+      <tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> {{cRate}} </td><td> <a href="/journal?date={{i['date']}}"><img src="{{ url_for('static', filename='images/filmreel.png') }}" style="width:32px;height:32px;"></a></td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
+      {% else %}
+      <tr><td> {{i['date']}} </td><td>  {{i['ice_time']}}  </td><td> {{i['ice_cost']}} </td><td> {{i['type']}} </td><td> {{i['coach_time']}} </td><td> {{i['coach_fname']}} {{i['coach_lname']}}</td><td> {{cRate}} </td><td> -- </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}} </td></tr>
+      {% endif %}
+  {% endfor %}
 
 </tbody>
 </div>
