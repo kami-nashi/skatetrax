@@ -38,7 +38,7 @@ def dbinsert(sql,recordTuple):
 
 # Sums ice hours of current month
 def icetimeCurrent():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and skate_type != 10'
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 10'
     results = dbconnect(sql)
     current = int(0)
     for i in results:
@@ -49,7 +49,7 @@ def icetimeCurrent():
 
 # Sums ice hours from previous month
 def icetimeLast():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and skate_type != 10'
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !9 or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !10'
     results = dbconnect(sql)
     current = int(0)
     for i in results:
@@ -60,7 +60,7 @@ def icetimeLast():
 
 # Sums inline hours of current month
 def inlinetimeCurrent():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or skate_type = 10'
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
     results = dbconnect(sql)
     current = int(0)
     for i in results:
@@ -71,7 +71,7 @@ def inlinetimeCurrent():
 
 # Sums inline hours from previous month
 def inlinetimeLast():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or skate_type = 10'
+    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
     results = dbconnect(sql)
     current = int(0)
     for i in results:
@@ -195,6 +195,7 @@ def addSchool():
     return classCost
 
 def addCostsTotal():
+    # x = format(value, ',d')
     costMaint = maintenance()
     costClub = addClub()
     costClass = addSchool()
