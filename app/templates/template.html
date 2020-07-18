@@ -46,7 +46,7 @@
             <a class="dropdown-item" href="#">Settings</a>
             <a class="dropdown-item" href="#">Activity Log</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
+            <a class="nav-item"><button class="btntxt" data-modal="modalZero">Login</button></a>
           </div>
           </li>
           <li class="nav-item"><button class="btntxt" data-modal="modalOne">Update Time</button></li>
@@ -137,6 +137,24 @@
        </div>
        </div>
       </div>
+
+      <div id="modalZero" class="modal" style="display: none;">
+      <div class="modal-content">
+      <div class="modal-header">
+      <h2>Login</h2>
+      <span class="close">×</span>
+      </div>
+      <div>
+         <form action='submit_modalLogin' method='POST'><div class="navbar navbar-expand static-top">
+         <span class="px-2"> Username: <input size='12' type='text' name='m_date' id='m_date' value=""/></span>
+         <span class="px-2"> Password: <input size='12' type='text' name='m_hours_on' id='m_hours_on'/></span>
+         <span class="px-2"><input type="submit" class="btntxt" value="Login"></span></div>
+      </form>
+
+      </div>
+      </div>
+     </div>
+
         <div class="container-fluid">
 
           <!-- Breadcrumbs-->
@@ -178,11 +196,11 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Login to enter time</h5>
             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
@@ -190,7 +208,7 @@
           <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" href="login.html">Login</a>
           </div>
         </div>
       </div>

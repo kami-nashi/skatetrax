@@ -20,6 +20,43 @@ modalSessions = lj.sessionModal()
 costs = lm.addCostsTotal()
 hours = lm.addHoursTotal()
 
+# Login Decorator
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('You need to login first.')
+            return redirect(url_for('login'))
+    return wrap
+
+# route for handling the login page logic
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    aUser = None
+    sql = None
+    if request.method == 'POST':
+        sql = "select * from aUserTable where uLoginID = '" + request.form['username'] + "';"
+        aUser = dbconnect(sql)
+
+    if request.method == 'POST':
+        if (request.form['username'] != aUser[0]['uLoginID']) \
+                or request.form['password'] != aUser[0]['uHash']:
+            error = 'Invalid Credentials. Please try again.'
+
+        else:
+            session['logged_in'] = True
+            if session['logged_in'] == True:
+                session['username'] = aUser[0]['uLoginID']
+                session['sUUID'] = aUser[0]['uSkaterUUID']
+            else:
+                pass
+            flash('You were logged in.')
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)
+
 @app.route("/")
 def index():
     maint = lm.maintenance()

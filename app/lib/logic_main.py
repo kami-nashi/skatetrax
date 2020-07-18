@@ -1,6 +1,15 @@
 import pymysql
+import math
 import configparser as conf
 from collections import defaultdict
+
+# sanitize know problem makers from user input strings
+def stripper(str):
+    chars = [';', '#', '--', '//', '/', '.', '!', '\s', '\S', '*', '?', '\t', '\n', '\r', '@', '\\', '\\\\', '"', "'", 'drop']
+    if any((c in chars) for c in str):
+        return True
+    else:
+        return False
 
 def dbconnect(sql):
    configParser = conf.RawConfigParser()
@@ -21,20 +30,21 @@ def dbconnect(sql):
    return tables
 
 def dbinsert(sql,recordTuple):
-   configParser = conf.RawConfigParser()
-   configFilePath = r'/etc/skatetrax/settings.conf'
-   configParser.read(configFilePath)
-   host = configParser.get('dbconf', 'host')
-   user = configParser.get('dbconf', 'user')
-   password = configParser.get('dbconf', 'password')
-   db = configParser.get('dbconf', 'db')
-   con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
-   cur = con.cursor()
-   cur.execute(sql, recordTuple)
-   tables = cur.fetchall()
-   cur.connection.commit()
-   con.close()
-   return tables
+   if not stripper(recordTuple):
+        configParser = conf.RawConfigParser()
+        configFilePath = r'/etc/skatetrax/settings.conf'
+        configParser.read(configFilePath)
+        host = configParser.get('dbconf', 'host')
+        user = configParser.get('dbconf', 'user')
+        password = configParser.get('dbconf', 'password')
+        db = configParser.get('dbconf', 'db')
+        con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
+        cur = con.cursor()
+        cur.execute(sql, recordTuple)
+        tables = cur.fetchall()
+        cur.connection.commit()
+        con.close()
+        return tables
 
 # Sums ice hours of current month
 def icetimeCurrent():
@@ -84,7 +94,7 @@ def inlinetimeLast():
 def icetimeAdd():
     ice = 0
     ice_cost = 0
-    sql = 'select * from ice_time where skate_type != 9 and skate_type != 10'
+    sql = "SELECT * FROM ice_time WHERE skate_type != '9' AND skate_type != '10'"
     results = dbconnect(sql)
     for i in results:
         ice += i['ice_time']
@@ -96,7 +106,7 @@ def icetimeAdd():
 def inlinetimeAdd():
     ice = 0
     ice_cost = 0
-    sql = 'select * from ice_time where skate_type = 9 or skate_type = 10'
+    sql = "select * from ice_time where skate_type = '9' or skate_type = '10'"
     results = dbconnect(sql)
     for i in results:
         ice += i['ice_time']
@@ -212,7 +222,7 @@ def addHoursTotal():
     hoursPract = icetimeAdd()
     hoursCoach = coachtimeAdd2()
 
-    results = [hoursPract[0],hoursCoach[1]]
+    results = [round(hoursPract[0], 2),math.ceil(hoursCoach[1]*4)/4]
     return results
 
 def sessionsBrief():
