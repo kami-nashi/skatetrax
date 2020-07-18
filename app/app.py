@@ -8,17 +8,25 @@ from flask import redirect
 import json
 import pymysql
 import datetime
+import math
 
 import lib.logic_json as lj
 import lib.logic_main as lm
 
 app = Flask(__name__)
 
+# Make Shift/Pretend logged in user
+AuthSkaterUUID = 1
+
 # Global Stuff
 now = datetime.date.today()
 modalSessions = lj.sessionModal()
-costs = lm.addCostsTotal()
-hours = lm.addHoursTotal()
+costs = lm.addCostsTotal(AuthSkaterUUID)
+hours = lm.addHoursTotal(AuthSkaterUUID)
+cHours = lm.monthlyCoachTime(AuthSkaterUUID)
+sHours = lm.monthlyIceTime(AuthSkaterUUID)
+uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
 
 # Login Decorator
 def login_required(f):
@@ -59,39 +67,39 @@ def login():
 
 @app.route("/")
 def index():
-    maint = lm.maintenance()
-    sessions = lm.sessionsBrief()
-    return render_template('etemp_dashboard.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now)
+    maint = lm.maintenance(AuthSkaterUUID)
+    sessions = lm.sessionsBrief(AuthSkaterUUID)
+    return render_template('etemp_dashboard.html', costs=costs, hours=mHours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now)
 
 @app.route("/journal")
 def journal():
     jDate = request.args.get('date', default = '', type = str)
     if jDate == '':
-        jTable = lm.jVideos(jv=0)
+        jTable = lm.jVideos(AuthSkaterUUID,jv=0)
     else:
         print(jDate, 'its not empty')
-        jTable = lm.jVideos(jDate)
-    return render_template('etemp_journals.html', thour=hours[0], modal1=modalSessions, calDate=now, journalTable=jTable)
+        jTable = lm.jVideos(AuthSkaterUUID,jDate)
+    return render_template('etemp_journals.html', thour=hours[2], modal1=modalSessions, calDate=now, journalTable=jTable)
 
 @app.route("/skater_overview")
 def skater_overview():
-    sOff = lm.skaterOffBlades()
-    sIce = lm.skaterIceBlades()
-    return render_template('etemp_skater_overview.html', thour=hours[0], modal1=modalSessions, skateOff=sOff, skateIce=sIce)
+    sOff = lm.skaterOffBlades(AuthSkaterUUID)
+    sIce = lm.skaterIceBlades(AuthSkaterUUID)
+    return render_template('etemp_skater_overview.html', thour=hours[2], modal1=modalSessions, skateOff=sOff, skateIce=sIce)
 
 @app.route("/maintenance")
 def maintenance():
-    maint = lm.maintenance()
-    sessions = lm.sessionsBrief()
-    maintTable = lm.maintTable()
-    return render_template('etemp_maintenance.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], modal1=modalSessions, calDate=now,maintTable=maintTable)
+    maint = lm.maintenance(AuthSkaterUUID)
+    sessions = lm.sessionsBrief(AuthSkaterUUID)
+    maintTable = lm.maintTable(AuthSkaterUUID)
+    return render_template('etemp_maintenance.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now,maintTable=maintTable)
 
 @app.route("/ice_time")
 def iceTime():
-    maint = lm.maintenance()
-    sessions = lm.sessionsFull()
-    hLast = float(lm.icetimeLast())
-    hCurrent = float(lm.icetimeCurrent())
+    maint = lm.maintenance(AuthSkaterUUID)
+    sessions = lm.sessionsFull(AuthSkaterUUID)
+    hLast = float(lm.icetimeLast(AuthSkaterUUID))
+    hCurrent = float(lm.icetimeCurrent(AuthSkaterUUID))
     hStatus = "normal"
     if hCurrent > hLast:
         hStatus = "text-success"
@@ -103,8 +111,8 @@ def iceTime():
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
 
-    inlineLast = float(lm.inlinetimeLast())
-    inlineCurrent = float(lm.inlinetimeCurrent())
+    inlineLast = float(lm.inlinetimeLast(AuthSkaterUUID))
+    inlineCurrent = float(lm.inlinetimeCurrent(AuthSkaterUUID))
     inlineStatus = "normal"
     if inlineCurrent > inlineLast:
         inlineStatus = "text-success"
@@ -116,8 +124,8 @@ def iceTime():
         inlineStatus = "normal"
     inlineResults = [inlineLast,inlineCurrent,inlineStatus]
 
-    pData = lm.punchCard()
-    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[0], hStatus=hResults, inlineStatus=inlineResults, modal1=modalSessions, calDate=now, pData=pData)
+    pData = lm.punchCard(AuthSkaterUUID)
+    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=modalSessions, calDate=now, pData=pData)
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():
@@ -145,8 +153,8 @@ def submit_modalSession():
         iceCoach = request.form['coach']
         coachTime = request.form['coach_time']
 
-        sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id)values(%s, %s, %s, %s, %s, %s, %s) """
-        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc)
+        sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id,uSkaterUUID)values(%s, %s, %s, %s, %s, %s, %s, %s) """
+        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc,AuthSkaterUUID)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:
@@ -160,8 +168,8 @@ def submit_modalMaintenance():
         mCost = request.form['m_cost']
         mLocation = request.form['locationID']
 
-        sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location)values(%s, %s, %s, %s) """
-        recordTuple = (mDate,mOn,mCost,mLocation)
+        sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location,uSkaterUUID)values(%s, %s, %s, %s,%s) """
+        recordTuple = (mDate,mOn,mCost,mLocation,AuthSkaterUUID)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:

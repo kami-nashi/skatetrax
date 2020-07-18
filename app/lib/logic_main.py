@@ -11,7 +11,7 @@ def stripper(str):
     else:
         return False
 
-def dbconnect(sql):
+def dbconnect(sql,vTUP=None):
    configParser = conf.RawConfigParser()
    configFilePath = r'/etc/skatetrax/settings.conf'
    configParser.read(configFilePath)
@@ -23,7 +23,7 @@ def dbconnect(sql):
 
    con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
    cur = con.cursor()
-   cur.execute(sql)
+   cur.execute(sql, vTUP)
    tables = cur.fetchall()
    cur.connection.commit()
    con.close()
@@ -47,9 +47,10 @@ def dbinsert(sql,recordTuple):
         return tables
 
 # Sums ice hours of current month
-def icetimeCurrent():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 10'
-    results = dbconnect(sql)
+def icetimeCurrent(uSkaterUUID):
+    vTUP = uSkaterUUID
+    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 9 and MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != 10'
+    results = dbconnect(sql, vTUP)
     current = int(0)
     for i in results:
         current += i['ice_time']
@@ -58,9 +59,10 @@ def icetimeCurrent():
     return ice_hours
 
 # Sums ice hours from previous month
-def icetimeLast():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !9 or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !10'
-    results = dbconnect(sql)
+def icetimeLast(uSkaterUUID):
+    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !9 or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !10'
+    vTUP = uSkaterUUID
+    results = dbconnect(sql,vTUP)
     current = int(0)
     for i in results:
         current += i['ice_time']
@@ -69,9 +71,10 @@ def icetimeLast():
     return ice_hours
 
 # Sums inline hours of current month
-def inlinetimeCurrent():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
-    results = dbconnect(sql)
+def inlinetimeCurrent(uSkaterUUID):
+    vTUP = (uSkaterUUID,uSkaterUUID)
+    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or uSkaterUUID = %s AND MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
+    results = dbconnect(sql,vTUP)
     current = int(0)
     for i in results:
         current += i['ice_time']
@@ -80,9 +83,10 @@ def inlinetimeCurrent():
     return ice_hours
 
 # Sums inline hours from previous month
-def inlinetimeLast():
-    sql = 'SELECT ice_time FROM ice_time WHERE MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
-    results = dbconnect(sql)
+def inlinetimeLast(uSkaterUUID):
+    vTUP = (uSkaterUUID,uSkaterUUID)
+    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
+    results = dbconnect(sql,vTUP)
     current = int(0)
     for i in results:
         current += i['ice_time']
@@ -91,11 +95,12 @@ def inlinetimeLast():
     return ice_hours
 
 # Sums total amount of hours on ice and cost of time on ice
-def icetimeAdd():
+def icetimeAdd(AuthSkaterUUID):
     ice = 0
     ice_cost = 0
-    sql = "SELECT * FROM ice_time WHERE skate_type != '9' AND skate_type != '10'"
-    results = dbconnect(sql)
+    vTUP = (AuthSkaterUUID)
+    sql = "SELECT * FROM ice_time WHERE uSkaterUUID = %s AND skate_type != '9' AND skate_type != '10'"
+    results = dbconnect(sql, vTUP)
     for i in results:
         ice += i['ice_time']
         ice_cost += i['ice_cost']
@@ -103,10 +108,11 @@ def icetimeAdd():
     query = [ice_time,ice_cost]
     return query
 
-def inlinetimeAdd():
+def inlinetimeAdd(AuthSkaterUUID):
     ice = 0
     ice_cost = 0
-    sql = "select * from ice_time where skate_type = '9' or skate_type = '10'"
+    vTUP = (AuthSkaterUUID, vTUP)
+    sql = "select * from ice_time where uSkaterUUID = %s AND skate_type = '9' or skate_type = '10'"
     results = dbconnect(sql)
     for i in results:
         ice += i['ice_time']
@@ -115,14 +121,15 @@ def inlinetimeAdd():
     return query
 
 # Good luck figuring this one out. Sigh.
-def coachtimeAdd2():
+def coachtimeAdd2(AuthSkaterUUID):
     coachTime = 0
     coachRate = 0
     coachConversion = 0
     coachCost = 0
     coachMinutes = 0
-    sql = 'SELECT ice_time.*, coaches.* FROM ice_time, coaches WHERE ice_time.coach_id = coaches.id'
-    results = dbconnect(sql)
+    vTUP = (AuthSkaterUUID)
+    sql = 'SELECT ice_time.*, coaches.* FROM ice_time, coaches WHERE ice_time.uSkaterUUID = %s AND ice_time.coach_id = coaches.id'
+    results = dbconnect(sql, vTUP)
     for i in results:
         coachMinutes += i['coach_time']
         coachTime = i['coach_time']
@@ -134,116 +141,142 @@ def coachtimeAdd2():
     query = [coachCost,coachHours,coachMinutes,coachRate,coachTime,coachConversion]
     return query
 
+def monthlyIceTime(AuthSkaterUUID):
+    vTUP = (AuthSkaterUUID)
+    sql = "SELECT SUM(ice_time/60) AS monthly_ice FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
+    results = dbconnect(sql, vTUP)
+    return results
+
+def monthlyCoachTime(AuthSkaterUUID):
+    vTUP = (AuthSkaterUUID)
+    sql = "SELECT SUM(coach_time/60) AS monthly_coach FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
+    results = dbconnect(sql, vTUP)
+    return results
+
 ###############################################################
 #  Maintenance Stuff
 ###############################################################
 
-def maintenance():
+def maintenance(AuthSkaterUUID):
     mHours = 0
     mCost = 0
-    sql = 'select * from maintenance'
-    results = dbconnect(sql)
+    vTUP = AuthSkaterUUID
+    sql = 'select * from maintenance WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
     for i in results:
         mHours += i['m_hours_on']
         mCost += i['m_cost']
-    iceTimeTotal = icetimeAdd()
+    iceTimeTotal = icetimeAdd(AuthSkaterUUID)
     mOn = (float(iceTimeTotal[0])-float(mHours))
     mRemaining = 21 - mOn
     query = [mHours,mCost,mOn,mRemaining]
     return query
 
-def maintTable():
-    sql = 'select * from maintenance, locations where maintenance.m_location = locations.id order by m_date desc'
-    query = dbconnect(sql)
+def maintTable(AuthSkaterUUID):
+    vTUP = AuthSkaterUUID
+    sql = 'select * from maintenance, locations where uSkaterUUID = %s AND maintenance.m_location = locations.id order by m_date desc'
+    query = dbconnect(sql,vTUP)
     return query
 
-def addTotals():
-    ice = icetimeAdd()
-    coach = coachtimeAdd2()
-    maint = maintenance()
+def addTotals(AuthSkaterUUID):
+    ice = icetimeAdd(AuthSkaterUUID)
+    coach = coachtimeAdd2(AuthSkaterUUID)
+    maint = maintenance(AuthSkaterUUID)
     cost = [ice[0],coach[0],maint[1]]
     return cost
 
-def addEventsC():
+def addEventsC(AuthSkaterUUID):
     cCost = 0
-    sql= 'SELECT * FROM events_c'
-    results = dbconnect(sql)
+    vTUP = AuthSkaterUUID
+    sql= 'SELECT * FROM events_c WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
     for i in results:
         cCost +=i['e_cost']
     return cCost
 
-def addEventsP():
+def addEventsP(AuthSkaterUUID):
     pCost = 0
-    sql = 'SELECT * FROM events_p'
-    results = dbconnect(sql)
+    vTUP = AuthSkaterUUID
+    sql = 'SELECT * FROM events_p WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
     for i in results:
         pCost += i['e_cost']
     return pCost
 
-def addEquip():
+def addEquip(AuthSkaterUUID):
     eCost = 0
-    sql = 'SELECT * FROM equip_manifest'
-    results = dbconnect(sql)
+    vTUP = (AuthSkaterUUID,AuthSkaterUUID,AuthSkaterUUID)
+    sql = 'SELECT equip_manifest.cost_actual FROM equip_manifest WHERE equip_manifest.uSkaterUUID = %s UNION ALL SELECT uSkaterBlades.bladesPurchAmount FROM uSkaterBlades WHERE uSkaterBlades.uSkaterUUID = %s UNION ALL SELECT uSkaterBoots.bootsPurchAmount FROM uSkaterBoots WHERE uSkaterBoots.uSkaterUUID = %s'
+    sql1 = 'SELECT * FROM equip_manifest WHERE uSkaterUUID = %s '
+    sql2 = 'SELECT * FROM uSkaterBlades WHERE uSkaterUUID = %s '
+    sql3 = sql2 = 'SELECT * FROM uSkaterBoots WHERE uSkaterUUID = %s '
+    results = dbconnect(sql,vTUP)
     for i in results:
         eCost += i['cost_actual']
     return eCost
 
-def addClub():
+def addClub(AuthSkaterUUID):
     cCost = 0
-    sql = 'SELECT * FROM club_membership'
-    results = dbconnect(sql)
+    vTUP = AuthSkaterUUID
+    sql = 'SELECT * FROM club_membership WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
     for i in results:
         cCost += i['club_cost']
     return cCost
 
-def addSchool():
+def addSchool(AuthSkaterUUID):
     classCost = 0
-    sql = 'SELECT * FROM class_skate_school'
-    results = dbconnect(sql)
+    vTUP = AuthSkaterUUID
+    sql = 'SELECT * FROM class_skate_school WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
     for i in results:
         classCost += i['class_cost']
     return classCost
 
-def addCostsTotal():
+def addCostsTotal(AuthSkaterUUID):
     # x = format(value, ',d')
-    costMaint = maintenance()
-    costClub = addClub()
-    costClass = addSchool()
-    costEquip = addEquip()
-    costIce = icetimeAdd()
-    eventsC = addEventsC()
-    eventsP = addEventsP()
-    timeCoach = coachtimeAdd2()
+    costMaint = maintenance(AuthSkaterUUID)
+    costClub = addClub(AuthSkaterUUID)
+    costClass = addSchool(AuthSkaterUUID)
+    costEquip = addEquip(AuthSkaterUUID)
+    costIce = icetimeAdd(AuthSkaterUUID)
+    eventsC = addEventsC(AuthSkaterUUID)
+    eventsP = addEventsP(AuthSkaterUUID)
+    timeCoach = coachtimeAdd2(AuthSkaterUUID)
     total = (float(costEquip)+float(costMaint[1])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
     query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
     return query
 
-def addHoursTotal():
-    hoursPract = icetimeAdd()
-    hoursCoach = coachtimeAdd2()
+def addHoursTotal(AuthSkaterUUID):
+    hoursPract = icetimeAdd(AuthSkaterUUID)
+    hoursCoach = coachtimeAdd2(AuthSkaterUUID)
+    hoursDiff = round(hoursPract[0], 2)-math.ceil(hoursCoach[1]*4)/4
 
-    results = [round(hoursPract[0], 2),math.ceil(hoursCoach[1]*4)/4]
+    results = [hoursDiff,math.ceil(hoursCoach[1]*4)/4,hoursPract]
     return results
 
-def sessionsBrief():
-    sql = 'select * from ice_time, coaches, locations, ice_type where ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date > (NOW() - INTERVAL 14 DAY) ORDER BY date DESC';
-    results = dbconnect(sql)
+def sessionsBrief(AuthSkaterUUID):
+    vTUP = (AuthSkaterUUID)
+    sql = 'select * from ice_time, coaches, locations, ice_type where uSkaterUUID = %s AND ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date > (NOW() - INTERVAL 14 DAY) ORDER BY date DESC';
+    results = dbconnect(sql, vTUP)
     return results
 
-def sessionsFull():
-    sql = 'select * from ice_time, coaches, locations, ice_type where ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date ORDER BY date DESC';
-    results = dbconnect(sql)
+def sessionsFull(AuthSkaterUUID):
+    vTUP = (AuthSkaterUUID)
+    sql = 'select * from ice_time, coaches, locations, ice_type where uSkaterUUID = %s AND ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date ORDER BY date DESC';
+    results = dbconnect(sql, vTUP)
     return results
 ################################################################################################################
 ##						Calculate Punch Cards					      ##
 ################################################################################################################
 
-def skateTotal():
+def skateTotal(AuthSkaterUUID):
     skateTotal = 0
     punchTotal = 0
     punchesTotal = 0
-    sql = 'SELECT * FROM ice_time WHERE skate_type = 8'
-    results = dbconnect(sql)
+    vTUP = (AuthSkaterUUID)
+    sql = 'SELECT * FROM ice_time WHERE uSkaterUUID = %s AND skate_type = 8'
+    results = dbconnect(sql,vTUP)
     for i in results:
         skateTotal += i['ice_time']
         punchDown = i['ice_time']/30
@@ -251,22 +284,24 @@ def skateTotal():
     query = [skateTotal,punchesTotal]
     return query
 
-def punchCard():
-    sql = 'select distinct punch_location from ice_punch'
-    results = dbconnect(sql)
+def punchCard(AuthSkaterUUID):
+    vTUP = (AuthSkaterUUID)
+    sql = 'select distinct punch_location from ice_punch WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
     rData = {}
     rResults = []
     for i in results:
         pTime = 0
         pCost = 0
         rinkId = str(i['punch_location'])
-        pSql = 'select * from ice_punch where punch_location = ' + rinkId
-        pResults = dbconnect(pSql)
+        pSql = 'select * from ice_punch where uSkaterUUID = %s AND punch_location = %s'
+        vTUP = (AuthSkaterUUID,rinkId)
+        pResults = dbconnect(pSql,vTUP)
         for z in pResults:
             pTime += z['punch_time']
             pCost += z['punch_cost']
-            iceSql = 'select * from ice_time, locations where locations.id = ice_time.rink_id and skate_type = 8 and rink_id = '+ rinkId
-        iResults = dbconnect(iceSql)
+            iceSql = 'select * from ice_time, locations where uSkaterUUID = %s AND locations.id = ice_time.rink_id and skate_type = 8 and rink_id = %s'
+        iResults = dbconnect(iceSql,vTUP)
         iCost = 0
         iMinutes  = 0
         rinkName = ''
@@ -300,20 +335,24 @@ def modalSessions():
        id = i['id']
        location_id = i['location_id']
 
-def jVideos(jv):
+def jVideos(AuthSkaterUUID,jv):
+    vTUP = (AuthSkaterUUID,AuthSkaterUUID)
     if jv == 0:
-        sql = 'SELECT ice_time.*, j_videos.* FROM ice_time, j_videos WHERE ice_time.has_video = 1 AND ice_time.date = j_videos.date order by ice_time.date desc'
+        sql = 'SELECT ice_time.*, j_videos.* FROM ice_time, j_videos WHERE j_videos.uSkaterUUID = %s AND ice_time.uSkaterUUID = %s AND ice_time.has_video = 1 AND ice_time.date = j_videos.date order by ice_time.date desc'
     else:
-        sql = "SELECT * FROM j_videos WHERE date = '" + str(jv) + "'"
-    results = dbconnect(sql)
+        vTUP = (AuthSkaterUUID,str(jv))
+        sql = "SELECT * FROM j_videos WHERE uSkaterUUID = %s AND date = %s"
+    results = dbconnect(sql,vTUP)
     return results
 
-def skaterOffBlades():
-    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboOff = uSkateConfig.ID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
-    results = dbconnect(sql)
+def skaterOffBlades(AuthSkaterUUID):
+    vTUP = AuthSkaterUUID
+    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboOff = uSkateConfig.ID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
+    results = dbconnect(sql,vTUP)
     return results
 
-def skaterIceBlades():
-    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboIce = uSkateConfig.ID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
-    results = dbconnect(sql)
+def skaterIceBlades(AuthSkaterUUID):
+    vTUP = AuthSkaterUUID
+    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboIce = uSkateConfig.ID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
+    results = dbconnect(sql,vTUP)
     return results
