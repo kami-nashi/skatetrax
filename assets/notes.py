@@ -3,8 +3,9 @@
 together and convert to hours.  Instead, it selects the last 12 months FOUND, and
 does the maths, resulting in empty months not making it into the results'''
 
-#SELECT date, SUM(ice_time/60) as sTime, SUM(coach_time/60) as cTime FROM
-#ice_time where uSkaterUUID = '1' GROUP BY year(date), month(date) ORDER BY DATE DESC LIMIT 12
+SELECT date, SUM(ice_time/60) as sTime, SUM(coach_time/60) as cTime FROM
+ice_time where uSkaterUUID = '1' GROUP BY year(date), month(date) ORDER BY DATE DESC LIMIT 12
+
 'datetime',   'sTIME',  'cTIME',
 '2020-07-15', '4.0000', '1.4666'
 '2020-06-02', '0.5000', '0.0000'
@@ -26,6 +27,11 @@ does the maths, resulting in empty months not making it into the results'''
 
 
 ################################################################################
+''' Taken from https://stackoverflow.com/questions/17916322/mysql-to-select-month-wise-record-even-if-data-not-exist
+I thought this was the same problem, and I've modified the accepted answer to fit
+and the results differ from above ... but its still not what I'm looking for.
+'''
+
 SELECT
   CONCAT(y, '-', LPAD(m, 2, '0')) as byMonth,
   date, sum(ice_time/60)
@@ -58,3 +64,18 @@ ON YEAR(`date`) = y AND MONTH(`date`) = m #col name
     AND uSkaterUUID = '1'
 GROUP BY y, m
 ORDER BY y, m
+
+'byMonth',  'date',      'sum(ice_time/60)'
+'2019-02', '2019-02-06', '1.0000'  # shouldn't be a result
+#'2019-08', '2019-08-01', '0.0000' missing
+#'2019-09', '2019-09-01', '0.0000' missing
+'2019-10', '2019-10-07', '1.0000'
+#'2019-11', '2019-11-01', '0.0000' missing
+#'2019-12', '2019-12-01', '0.0000' missing
+#'2020-01', '2020-01-01', '0.0000' missing
+'2020-02', '2020-02-10', '1.0000'
+'2020-03', '2020-03-20', '0.5000'
+'2020-04', '2020-04-20', '1.0000'
+'2020-05', '2020-05-04', '0.7500'
+'2020-06', '2020-06-02', '0.5000'
+'2020-07', '2020-07-15', '4.0000'

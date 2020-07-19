@@ -16,7 +16,7 @@ import lib.logic_main as lm
 app = Flask(__name__)
 
 # Make Shift/Pretend logged in user
-AuthSkaterUUID = 2
+AuthSkaterUUID = 1
 
 # Global Stuff
 now = datetime.date.today()
