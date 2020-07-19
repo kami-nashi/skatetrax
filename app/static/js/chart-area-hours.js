@@ -8,7 +8,7 @@ var iceTimes = [];
 var coachTimes = [];
 
 /**
- * 
+ *
  */
 var getJSON = function(url, callback) {
   var xhr = new XMLHttpRequest();
@@ -25,7 +25,7 @@ var getJSON = function(url, callback) {
   xhr.send();
 };
 
-getJSON('http://journal.kami-nashi.com/skatetrax.core/chart-skate_time.php', function(err, data) {
+getJSON('/api/json/sessionsArea', function(err, data) {
   if (err !== null) {
     alert('Something went wrong: ' + err);
   } else {

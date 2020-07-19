@@ -1,3 +1,4 @@
+// Creates the area chart in the ICE_TIME path, for displaying coached vs uncoached in past 12 months
 // Set new default font family and font color to mimic Bootstrap's default styling
 Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#292b2c';
@@ -42,7 +43,7 @@ getJSON(apiUrl_sessions, function(err, data) {
         datasets: [{
           label: "Ice Time",
           lineColor: "red",
-          lineTension: 0.3,
+          lineTension: 0.25,
           backgroundColor: "rgba(2,117,216,0.2)",
               borderColor: "rgba(2,117,216,1)",
               pointRadius: 1,
@@ -56,7 +57,7 @@ getJSON(apiUrl_sessions, function(err, data) {
             },
             {
               label: "Coach Time",
-              lineTension: 0.3,
+              lineTension: 0.25,
               backgroundColor: "rgba(141, 93, 162, 0.5)",
               borderColor: "rgb(142,94,162)",
               pointRadius: 1,

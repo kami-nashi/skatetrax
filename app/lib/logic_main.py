@@ -60,7 +60,7 @@ def icetimeCurrent(uSkaterUUID):
 
 # Sums ice hours from previous month
 def icetimeLast(uSkaterUUID):
-    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !9 or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = !10'
+    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != "9" or MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != "10"'
     vTUP = uSkaterUUID
     results = dbconnect(sql,vTUP)
     current = int(0)

@@ -16,7 +16,7 @@ import lib.logic_main as lm
 app = Flask(__name__)
 
 # Make Shift/Pretend logged in user
-AuthSkaterUUID = 1
+AuthSkaterUUID = 2
 
 # Global Stuff
 now = datetime.date.today()
@@ -126,6 +126,13 @@ def iceTime():
 
     pData = lm.punchCard(AuthSkaterUUID)
     return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=modalSessions, calDate=now, pData=pData)
+
+@app.route('/api/json/sessionsArea', methods=['GET'])
+def sessionsArea():
+    session = json.loads(lj.sessionsArea(AuthSkaterUUID))
+    jsession = json.dumps(session, indent=4)
+    resp = Response(jsession, status=200, mimetype='application/json')
+    return resp
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
 def sessionsFull():
