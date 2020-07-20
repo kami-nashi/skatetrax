@@ -8,7 +8,7 @@ def sessionsArea(uSkaterUUID):
     results = st.dbconnect(sql, vTUP)
     dump = []
     for i in results:
-            dump.append({'date': str(i['bDate']), 'ice_time': int(i['iTime']), 'coach_time': format(math.ceil(float(i['cTime'])*4)/4, '.2f'), 'uuid': i['uSuuid']})
+            dump.append({'date': str(i['bDate']), 'ice_time': format(float(i['iTime']), '.2f'), 'coach_time': format(math.ceil(float(i['cTime'])*4)/4, '.2f'), 'uuid': i['uSuuid']})
     jdump = json.dumps(dump, indent=4, default=str)
     return jdump
     return jdump
