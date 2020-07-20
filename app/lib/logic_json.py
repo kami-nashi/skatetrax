@@ -3,13 +3,14 @@ import json
 import math
 
 def sessionsArea(uSkaterUUID):
-    vTUP = uSkaterUUID
-    sql = "SELECT MONTHNAME(date) as monthDate, SUM(ice_time/60) as sTime, SUM(coach_time/60) as cTime FROM ice_time where uSkaterUUID = %s GROUP BY YEAR(date), MONTH(date) ORDER BY DATE DESC LIMIT 12"
-    results = st.dbconnect(sql,vTUP)
+    vTUP = (uSkaterUUID, uSkaterUUID)
+    sql= "SELECT date_format(bam.date, '%%Y-%%m') as bDate, IFNULL(date_format(ice.date, '%%Y-%%m'), date_format(bam.date, '%%Y-%%m')) as iDate, IFNULL(sum(ice.ice_time/60), 0) as iTime, IFNULL(sum(ice.coach_time/60), 0) as cTime, IFNULL(ice.uSkaterUUID, %s) as uSuuid FROM (select * from ice_time where uSkaterUUID = %s) ice right JOIN baMonths bam ON date_format(bam.date, '%%Y-%%m') = date_format(ice.date, '%%Y-%%m') group by bam.date order by bam.date desc"
+    results = st.dbconnect(sql, vTUP)
     dump = []
     for i in results:
-            dump.append({'date': str(i['monthDate']), 'ice_time': int(i['sTime']), 'coach_time': format(math.ceil(float(i['cTime'])*4)/4, '.2f')})
+            dump.append({'date': str(i['bDate']), 'ice_time': int(i['iTime']), 'coach_time': format(math.ceil(float(i['cTime'])*4)/4, '.2f'), 'uuid': i['uSuuid']})
     jdump = json.dumps(dump, indent=4, default=str)
+    return jdump
     return jdump
 
 def sessionsFull():

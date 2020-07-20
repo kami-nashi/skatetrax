@@ -127,6 +127,13 @@ def iceTime():
     pData = lm.punchCard(AuthSkaterUUID)
     return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=modalSessions, calDate=now, pData=pData)
 
+@app.route('/api/json/areaTest', methods=['GET'])
+def areaTest():
+    session = json.loads(lj.areaTest(AuthSkaterUUID))
+    jsession = json.dumps(session, indent=4)
+    resp = Response(jsession, status=200, mimetype='application/json')
+    return resp
+
 @app.route('/api/json/sessionsArea', methods=['GET'])
 def sessionsArea():
     session = json.loads(lj.sessionsArea(AuthSkaterUUID))
