@@ -159,7 +159,7 @@ def monthlyCoachTime(AuthSkaterUUID):
 def uMantenanceV2(AuthSkaterUUID):
     vTUP = (AuthSkaterUUID)
     getActiveSkateHours = '''
-    SELECT sum(ice_time.ice_time/60) FROM ice_time,
+    SELECT ifnull(sum(ice_time.ice_time/60),0) as tHours from ice_time,
     (SELECT fSkater.uSkateComboIce as activeICE, fSkater.uSkaterUUID as sUUID
     FROM uSkaterConfig fSkater
     INNER JOIN uSkateConfig sConfig ON fSkater.uSkaterUUID = sConfig.uSkaterUUID and fSkater.uSkateComboIce = sConfig.aSkateConfigID
@@ -174,14 +174,25 @@ def uMantenanceV2(AuthSkaterUUID):
     results0 = dbconnect(getActiveSkateHours,vTUP)
     results1 = dbconnect(getActiveMaintHours,vTUP)
     results2 = dbconnect(getUserMaintLimit,vTUP)
-    fResult0 = float(results0[0]['sum(ice_time.ice_time/60)'])
-    fResult1 = float(results1[0]['mHours'])
+    fResult0 = results0[0]['tHours']
+    fResult1 = results1[0]['mHours']
     fResult2 = float(results2[0]['uSkaterMaintPref'])
-    results3 = fResult0-fResult1  # subtract total maintenance hours from total skate's time hours
-                                  #   which resets any bias on the blades clock against the user prefs
-                                  #   example - fResult0 = 104.75, fResult1=100 resets to 4.75 hours of
-                                  #   the user's prefs, because there are already 100 hours of maint time
-    results4 = fResult2-results3  # Hours remaining until maintenance time
+
+    if fResult0 is not None:        # if db returns null, give it a value of zero, or make it a float
+        fResult0 = float(fResult0)
+    else:
+        fResult0 = int('0')
+
+    if fResult1 is not None:        # again, # if db returns null, give it a value of zero, or make it a float
+        fResult1 = float(fResult1)
+    else:
+        fResult1 = int('0')
+
+    results3 = fResult0-fResult1    # subtract total maintenance hours from total skate's time hours
+                                    #   which resets any bias on the blades clock against the user prefs
+                                    #   example - fResult0 = 104.75, fResult1=100 resets to 4.75 hours of
+                                    #   the user's prefs, because there are already 100 hours of maint time
+    results4 = fResult2-results3    # Hours remaining until maintenance time
     results5 = dbconnect(getUserMaintSum,vTUP)
     fResult3 = float(results5[0]['mCost'])
     results = [fResult0,fResult1,fResult2,results4,fResult3]
