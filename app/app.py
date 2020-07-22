@@ -67,7 +67,7 @@ def login():
 
 @app.route("/")
 def index():
-    maint = lm.maintenance(AuthSkaterUUID)
+    maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsBrief(AuthSkaterUUID)
     return render_template('etemp_dashboard.html', costs=costs, hours=mHours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now)
 
@@ -89,14 +89,14 @@ def skater_overview():
 
 @app.route("/maintenance")
 def maintenance():
-    maint = lm.maintenance(AuthSkaterUUID)
+    maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsBrief(AuthSkaterUUID)
     maintTable = lm.maintTable(AuthSkaterUUID)
     return render_template('etemp_maintenance.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now,maintTable=maintTable)
 
 @app.route("/ice_time")
 def iceTime():
-    maint = lm.maintenance(AuthSkaterUUID)
+    maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsFull(AuthSkaterUUID)
     hLast = float(lm.icetimeLast(AuthSkaterUUID))
     hCurrent = float(lm.icetimeCurrent(AuthSkaterUUID))

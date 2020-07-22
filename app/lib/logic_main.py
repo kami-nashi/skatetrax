@@ -170,6 +170,7 @@ def uMantenanceV2(AuthSkaterUUID):
     '''
     getActiveMaintHours = 'select sum(m_hours_on) as mHours from maintenance, uSkaterConfig WHERE maintenance.uSkaterUUID = %s and (uSkaterConfig.uSkateComboIce = maintenance.conf_id)'
     getUserMaintLimit = 'select uSkaterMaintPref from uSkaterConfig where uSkaterUUID = %s'
+    getUserMaintSum = 'select sum(ifnull(m_cost, 0)) as mCost from maintenance WHERE maintenance.uSkaterUUID = %s'
     results0 = dbconnect(getActiveSkateHours,vTUP)
     results1 = dbconnect(getActiveMaintHours,vTUP)
     results2 = dbconnect(getUserMaintLimit,vTUP)
@@ -181,23 +182,11 @@ def uMantenanceV2(AuthSkaterUUID):
                                   #   example - fResult0 = 104.75, fResult1=100 resets to 4.75 hours of
                                   #   the user's prefs, because there are already 100 hours of maint time
     results4 = fResult2-results3  # Hours remaining until maintenance time
-    results = [fResult0,fResult1,fResult2,results4]
+    results5 = dbconnect(getUserMaintSum,vTUP)
+    fResult3 = float(results5[0]['mCost'])
+    results = [fResult0,fResult1,fResult2,results4,fResult3]
     return results
-    
-def maintenance(AuthSkaterUUID):
-    mHours = 0
-    mCost = 0
-    vTUP = AuthSkaterUUID
-    sql = 'select * from maintenance, uSkaterConfig WHERE maintenance.uSkaterUUID = %s and (uSkaterConfig.uSkateComboIce = maintenance.conf_id)'
-    results = dbconnect(sql,vTUP)
-    for i in results:
-        mHours += i['m_hours_on']
-        mCost += i['m_cost']
-    iceTimeTotal = icetimeAdd(AuthSkaterUUID)
-    mOn = (float(iceTimeTotal[0])-float(mHours))
-    mRemaining = 21 - mOn
-    query = [mHours,mCost,mOn,mRemaining]
-    return query
+
 
 def maintTable(AuthSkaterUUID):
     vTUP = AuthSkaterUUID
@@ -210,8 +199,8 @@ def maintTable(AuthSkaterUUID):
 def addTotals(AuthSkaterUUID):
     ice = icetimeAdd(AuthSkaterUUID)
     coach = coachtimeAdd2(AuthSkaterUUID)
-    maint = maintenance(AuthSkaterUUID)
-    cost = [ice[0],coach[0],maint[1]]
+    maint = uMantenanceV2(AuthSkaterUUID)
+    cost = [ice[0],coach[0],maint[4]]
     return cost
 
 def addEventsC(AuthSkaterUUID):
@@ -264,7 +253,7 @@ def addSchool(AuthSkaterUUID):
 
 def addCostsTotal(AuthSkaterUUID):
     # x = format(value, ',d')
-    costMaint = maintenance(AuthSkaterUUID)
+    costMaint = uMantenanceV2(AuthSkaterUUID)
     costClub = addClub(AuthSkaterUUID)
     costClass = addSchool(AuthSkaterUUID)
     costEquip = addEquip(AuthSkaterUUID)
@@ -272,8 +261,8 @@ def addCostsTotal(AuthSkaterUUID):
     eventsC = addEventsC(AuthSkaterUUID)
     eventsP = addEventsP(AuthSkaterUUID)
     timeCoach = coachtimeAdd2(AuthSkaterUUID)
-    total = (float(costEquip)+float(costMaint[1])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
-    query = [costEquip,costMaint[1],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
+    total = (float(costEquip)+float(costMaint[4])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
+    query = [costEquip,costMaint[4],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
     return query
 
 def addHoursTotal(AuthSkaterUUID):
