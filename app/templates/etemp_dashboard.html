@@ -126,7 +126,7 @@ new Chart(document.getElementById("doughnut-chart"), {
 new Chart(document.getElementById("doughnut-chart2"), {
     type: "doughnut",
     data: {
-      labels: ["Time On", "Time Remaining"],
+      labels: ["Time On", ""],
       datasets: [
         {
           label: "Hours Overview",
@@ -156,8 +156,13 @@ new Chart(document.getElementById("doughnut-chart2"), {
             <td class="text-left"> Current Hours </td>
         </tr>
         <tr class="small">
+            {% if maint[3] < 0 %}
+            <td class="text-right">{{ maint[3]|abs }}</td>
+            <td class="text-left"> Hours Over </td>
+            {%- else %}
             <td class="text-right">{{ maint[3] }}</td>
             <td class="text-left"> Hours Remaining </td>
+            {% endif %}
         </tr>
         </tbody>
     </table>

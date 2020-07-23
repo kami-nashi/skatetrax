@@ -30,8 +30,13 @@
             <td class="text-left"> Hours Currently </td>
         </tr>
         <tr class="small">
-            <td class="text-right">{{ maint[3] }}</td>
-            <td class="text-left"> Hours Remaining </td>
+          {% if maint[3] < 0 %}
+          <td class="text-right">{{ maint[3]|abs }}</td>
+          <td class="text-left"> Hours Over </td>
+          {%- else %}
+          <td class="text-left"> Hours Remaining </td>
+          <td class="text-right">{{ maint[3] }}</td>
+          {% endif %}
         </tr>
         </tbody>
     </table>
@@ -42,7 +47,7 @@
 new Chart(document.getElementById("doughnut-chart2"), {
     type: "doughnut",
     data: {
-      labels: ["Hours Currently", "Hours Remaining"],
+      labels: ["Hours Currently", ""],
       datasets: [
         {
           label: "Maintenance Hours",
