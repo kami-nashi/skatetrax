@@ -11,7 +11,7 @@
         </thead>
         <tbody>
         <tr class="small">
-            <td class="text-right">${{ costs[1] }}</td>
+            <td class="text-right">{{ "${:,.2f}".format(costs[1]) }}</td>
             <td class="text-left"> Maintenance </td>
         </tr>
         </tbody>
@@ -34,8 +34,8 @@
           <td class="text-right">{{ maint[3]|abs }}</td>
           <td class="text-left"> Hours Over </td>
           {%- else %}
-          <td class="text-left"> Hours Remaining </td>
           <td class="text-right">{{ maint[3] }}</td>
+          <td class="text-left"> Hours Remaining </td>        
           {% endif %}
         </tr>
         </tbody>
@@ -79,7 +79,7 @@ new Chart(document.getElementById("doughnut-chart2"), {
 </thead><tbody>
 
 {% for i in maintTable %}
-    <tr><td> {{i['m_date']}} </td><td>  {{i['m_hours_on']}}  </td><td> {{i['m_cost']}} </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}}</td><td>
+    <tr><td> {{i['m_date']}} </td><td>  {{i['m_hours_on']}}  </td><td> {{"${:,.2f}".format(i['m_cost'])}} </td><td> {{i['location_id']}} </td><td> {{i['location_city']}} </td><td> {{i['location_state']}}</td><td>
 {% endfor %}
 
 </tbody>
