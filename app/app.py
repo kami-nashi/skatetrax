@@ -4,6 +4,11 @@ from flask import jsonify
 from flask import Response
 from flask import request
 from flask import redirect
+from flask import session
+from flask import flash
+from flask import url_for
+
+from functools import wraps
 
 import json
 import pymysql
@@ -14,6 +19,7 @@ import lib.logic_json as lj
 import lib.logic_main as lm
 
 app = Flask(__name__)
+app.secret_key = 'password1'
 
 # Make Shift/Pretend logged in user
 AuthSkaterUUID = 1
@@ -46,9 +52,9 @@ def login():
     aUser = None
     sql = None
     if request.method == 'POST':
-        sql = "select * from aUserTable where uLoginID = '" + request.form['username'] + "';"
-        aUser = dbconnect(sql)
-
+        vTUP = request.form['username']
+        sql = "select * from aUserTable where uLoginID = %s"
+        aUser = lm.dbconnect(sql, vTUP)
     if request.method == 'POST':
         if (request.form['username'] != aUser[0]['uLoginID']) \
                 or request.form['password'] != aUser[0]['uHash']:
@@ -59,17 +65,24 @@ def login():
             if session['logged_in'] == True:
                 session['username'] = aUser[0]['uLoginID']
                 session['sUUID'] = aUser[0]['uSkaterUUID']
+                authSkaterUUID = aUser
+                asUUID = (authSkaterUUID[0]['uSkaterUUID'])
+                aSkater = 'select * from uSkaterConfig where uSkaterUUID = %s'
+                aUserInfo = lm.dbconnect(aSkater,asUUID)
+                session['fName'] = aUserInfo[0]['uSkaterFname']
+                session['lName'] = aUserInfo[0]['uSkaterLname']
             else:
                 pass
             flash('You were logged in.')
-            return redirect(url_for('home'))
-    return render_template('login.html', error=error)
+            return redirect(url_for('index'))
+    return redirect(url_for('index'))
+
 
 @app.route("/")
 def index():
     maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsBrief(AuthSkaterUUID)
-    return render_template('etemp_dashboard.html', costs=costs, hours=mHours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now)
+    return render_template('etemp_dashboard.html', ses=session, costs=costs, hours=mHours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now)
 
 @app.route("/journal")
 def journal():
@@ -82,10 +95,11 @@ def journal():
     return render_template('etemp_journals.html', thour=hours[2], modal1=modalSessions, calDate=now, journalTable=jTable)
 
 @app.route("/skater_overview")
+@login_required
 def skater_overview():
     sOff = lm.skaterOffBlades(AuthSkaterUUID)
     sIce = lm.skaterIceBlades(AuthSkaterUUID)
-    return render_template('etemp_skater_overview.html', thour=hours[2], modal1=modalSessions, skateOff=sOff, skateIce=sIce)
+    return render_template('etemp_skater_overview.html',ses=session, thour=hours[2], modal1=modalSessions, skateOff=sOff, skateIce=sIce)
 
 @app.route("/maintenance")
 def maintenance():
@@ -188,6 +202,13 @@ def submit_modalMaintenance():
         return redirect(request.referrer)
     else:
         return redirect(request.referrer)
+
+@app.route('/logout')
+@login_required
+def logout():
+        session.pop('logged_in', None)
+        flash('You were logged out.')
+        return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, use_reloader=True, debug=True)
