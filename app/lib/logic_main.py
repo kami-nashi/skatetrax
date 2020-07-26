@@ -121,7 +121,7 @@ def inlinetimeAdd(AuthSkaterUUID):
     return query
 
 # Good luck figuring this one out. Sigh.
-def coachtimeAdd2(AuthSkaterUUID):
+def coachtimeAdd2(AuthSkaterUUID=None):
     coachTime = 0
     coachRate = 0
     coachConversion = 0
@@ -141,13 +141,13 @@ def coachtimeAdd2(AuthSkaterUUID):
     query = [coachCost,coachHours,coachMinutes,coachRate,coachTime,coachConversion]
     return query
 
-def monthlyIceTime(AuthSkaterUUID):
+def monthlyIceTime(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
     sql = "SELECT SUM(ice_time/60) AS monthly_ice FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
     results = dbconnect(sql, vTUP)
     return results
 
-def monthlyCoachTime(AuthSkaterUUID):
+def monthlyCoachTime(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
     sql = "SELECT SUM(coach_time/60) AS monthly_coach FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
     results = dbconnect(sql, vTUP)
@@ -156,7 +156,7 @@ def monthlyCoachTime(AuthSkaterUUID):
 ###############################################################
 #  Maintenance Stuff
 ###############################################################
-def uMantenanceV2(AuthSkaterUUID):
+def uMantenanceV2(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
     getActiveSkateHours = '''
     SELECT ifnull(sum(ice_time.ice_time/60),0) as tHours from ice_time,
@@ -262,7 +262,7 @@ def addSchool(AuthSkaterUUID):
         classCost += i['class_cost']
     return classCost
 
-def addCostsTotal(AuthSkaterUUID):
+def addCostsTotal(AuthSkaterUUID=None):
     # x = format(value, ',d')
     costMaint = uMantenanceV2(AuthSkaterUUID)
     costClub = addClub(AuthSkaterUUID)
@@ -276,7 +276,7 @@ def addCostsTotal(AuthSkaterUUID):
     query = [costEquip,costMaint[4],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
     return query
 
-def addHoursTotal(AuthSkaterUUID):
+def addHoursTotal(AuthSkaterUUID = None):
     hoursPract = icetimeAdd(AuthSkaterUUID)
     hoursCoach = coachtimeAdd2(AuthSkaterUUID)
     hoursDiff = round(hoursPract[0], 2)-math.ceil(hoursCoach[1]*4)/4
@@ -284,7 +284,7 @@ def addHoursTotal(AuthSkaterUUID):
     results = [hoursDiff,math.ceil(hoursCoach[1]*4)/4,hoursPract]
     return results
 
-def sessionsBrief(AuthSkaterUUID):
+def sessionsBrief(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
     sql = 'select * from ice_time, coaches, locations, ice_type where uSkaterUUID = %s AND ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date > (NOW() - INTERVAL 14 DAY) ORDER BY date DESC';
     results = dbconnect(sql, vTUP)

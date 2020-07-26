@@ -21,21 +21,25 @@ import lib.logic_main as lm
 
 app = Flask(__name__)
 app.secret_key = 'password1'
-
-# Make Shift/Pretend logged in user
-AuthSkaterUUID = 1
-
+global AnotherUUID
 @app.before_request
 def globalStuff():
-    # Global Stuff
-    g.now = datetime.date.today()
-    g.modalSessions = lj.sessionModal()
-    g.costs = lm.addCostsTotal(AuthSkaterUUID)
-    g.hours = lm.addHoursTotal(AuthSkaterUUID)
-    g.cHours = lm.monthlyCoachTime(AuthSkaterUUID)
-    g.sHours = lm.monthlyIceTime(AuthSkaterUUID)
-    g.uHours = math.ceil(g.sHours[0]['monthly_ice']*4)/4-math.ceil(g.cHours[0]['monthly_coach']*4)/4
-    g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
+
+
+    # Look to see if we're logged in. If not, ignore user specific stuff and move on
+    g.AuthSkaterUUID = None
+    if g.AuthSkaterUUID == None:
+        pass
+    else:
+        # Global Stuff
+        g.now = datetime.date.today()
+        g.modalSessions = lj.sessionModal()
+        g.costs = lm.addCostsTotal(session.get('uSkaterUUID'))
+        g.hours = lm.addHoursTotal(session.get('uSkaterUUID'))
+        g.cHours = lm.monthlyCoachTime(session.get('uSkaterUUID'))
+        g.sHours = lm.monthlyIceTime(session.get('uSkaterUUID'))
+        g.uHours = math.ceil(g.sHours[0]['monthly_ice']*4)/4-math.ceil(g.cHours[0]['monthly_coach']*4)/4
+        g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
 
 # Login Decorator
 def login_required(f):
@@ -47,6 +51,29 @@ def login_required(f):
             flash('You need to login first.')
             return redirect(url_for('login'))
     return wrap
+# Landing Page
+@app.route('/welcome')
+def index():
+    return render_template('unauth_welcome.html')
+
+# use decorators to link the function to a url
+@app.route('/')
+@login_required
+def home():
+    sql = "select * from uSkaterConfig where uSkaterUUID = %s"
+    subUserUUID = session['sUUID']
+    results = lm.dbconnect(sql,subUserUUID)
+    maint = lm.uMantenanceV2(AuthSkaterUUID)
+    sessions = lm.sessionsBrief(AuthSkaterUUID)
+    return render_template('etemp_dashboard.html', ses=session, costs=g.costs, hours=g.mHours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)  # render a template
+    # return "Hello, World!"  # return a string
+
+@app.route('/logout')
+@login_required
+def logout():
+        session.pop('logged_in', None)
+        flash('You were logged out.')
+        return redirect(url_for('index'))
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -55,9 +82,10 @@ def login():
     aUser = None
     sql = None
     if request.method == 'POST':
-        vTUP = request.form['username']
+        input = str(request.form['username'])
         sql = "select * from aUserTable where uLoginID = %s"
-        aUser = lm.dbconnect(sql, vTUP)
+        aUser = lm.dbconnect(sql,input)
+
     if request.method == 'POST':
         if (request.form['username'] != aUser[0]['uLoginID']) \
                 or request.form['password'] != aUser[0]['uHash']:
@@ -66,57 +94,130 @@ def login():
         else:
             session['logged_in'] = True
             if session['logged_in'] == True:
-                session['username'] = aUser[0]['uLoginID']
-                session['sUUID'] = aUser[0]['uSkaterUUID']
                 authSkaterUUID = aUser
                 asUUID = (authSkaterUUID[0]['uSkaterUUID'])
                 aSkater = 'select * from uSkaterConfig where uSkaterUUID = %s'
                 aUserInfo = lm.dbconnect(aSkater,asUUID)
+                session['username'] = aUser[0]['uLoginID']
+                session['sUUID'] = aUser[0]['uSkaterUUID']
+                session['username'] = aUser[0]['uLoginID']
+                session['sUUID'] = aUser[0]['uSkaterUUID']
                 session['fName'] = aUserInfo[0]['uSkaterFname']
                 session['lName'] = aUserInfo[0]['uSkaterLname']
+                session['uSkaterUUID'] = aUserInfo[0]['uSkaterUUID']
             else:
                 pass
             flash('You were logged in.')
-            return redirect(url_for('index'))
-    return redirect(url_for('index'))
+            return redirect(url_for('dashboard'))
+    return render_template('unauth_login.html', error=error)
 
 
-@app.route("/")
-def index():
-    maint = lm.uMantenanceV2(AuthSkaterUUID)
-    sessions = lm.sessionsBrief(AuthSkaterUUID)
-    return render_template('etemp_dashboard.html', ses=session, costs=g.costs, hours=g.mHours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    uSuid = session.get('uSkaterUUID')
+    print('SUID IS: ', uSuid)
+    maint = lm.uMantenanceV2(uSuid)
+    sessionTable = lm.sessionsBrief(uSuid)
+    modal1 = lj.sessionModal()
+    hours = lm.addHoursTotal(uSuid)
+    now = datetime.date.today()
+    costs = lm.addCostsTotal(uSuid)
+    cHours = lm.monthlyCoachTime(uSuid)
+    sHours = lm.monthlyIceTime(uSuid)
+    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
+
+    return render_template('etemp_dashboard.html', modal1=modal1, ses=session, thour=hours[2], hours=mHours, costs=costs, maint=maint, chart_body=sessionTable )
+
 
 @app.route("/journal")
+@login_required
 def journal():
+    uSuid = session.get('uSkaterUUID')
+    print('SUID IS: ', uSuid)
+    maint = lm.uMantenanceV2(uSuid)
+    sessionTable = lm.sessionsBrief(uSuid)
+    modal1 = lj.sessionModal()
+    hours = lm.addHoursTotal(uSuid)
+    now = datetime.date.today()
+    costs = lm.addCostsTotal(uSuid)
+    cHours = lm.monthlyCoachTime(uSuid)
+    sHours = lm.monthlyIceTime(uSuid)
+    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
     jDate = request.args.get('date', default = '', type = str)
     if jDate == '':
-        jTable = lm.jVideos(AuthSkaterUUID,jv=0)
+        jTable = lm.jVideos(uSuid,jv=0)
     else:
         print(jDate, 'its not empty')
-        jTable = lm.jVideos(AuthSkaterUUID,jDate)
-    return render_template('etemp_journals.html', ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
+        jTable = lm.jVideos(uSuid,jDate)
+    return render_template('etemp_journals.html', ses=session, thour=hours[2], modal1=modal1, calDate=now, journalTable=jTable)
 
 @app.route("/skater_overview")
 @login_required
 def skater_overview():
-    sOff = lm.skaterOffBlades(AuthSkaterUUID)
-    sIce = lm.skaterIceBlades(AuthSkaterUUID)
-    return render_template('etemp_skater_overview.html',ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce)
+
+    uSuid = session.get('uSkaterUUID')
+    print('SUID IS: ', uSuid)
+    maint = lm.uMantenanceV2(uSuid)
+    sessionTable = lm.sessionsBrief(uSuid)
+    modal1 = lj.sessionModal()
+    hours = lm.addHoursTotal(uSuid)
+    now = datetime.date.today()
+    costs = lm.addCostsTotal(uSuid)
+    cHours = lm.monthlyCoachTime(uSuid)
+    sHours = lm.monthlyIceTime(uSuid)
+    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
+
+    sOff = lm.skaterOffBlades(uSuid)
+    sIce = lm.skaterIceBlades(uSuid)
+    return render_template('etemp_skater_overview.html',ses=session, thour=hours[2], modal1=modal1, skateOff=sOff, skateIce=sIce)
 
 @app.route("/maintenance")
+@login_required
 def maintenance():
-    maint = lm.uMantenanceV2(AuthSkaterUUID)
-    sessions = lm.sessionsBrief(AuthSkaterUUID)
-    maintTable = lm.maintTable(AuthSkaterUUID)
-    return render_template('etemp_maintenance.html', ses=session, costs=g.costs, hours=g.hours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
+
+    uSuid = session.get('uSkaterUUID')
+    print('SUID IS: ', uSuid)
+    maint = lm.uMantenanceV2(uSuid)
+    sessionTable = lm.sessionsBrief(uSuid)
+    modal1 = lj.sessionModal()
+    hours = lm.addHoursTotal(uSuid)
+    now = datetime.date.today()
+    costs = lm.addCostsTotal(uSuid)
+    cHours = lm.monthlyCoachTime(uSuid)
+    sHours = lm.monthlyIceTime(uSuid)
+    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
+
+    maint = lm.uMantenanceV2(uSuid)
+    sessions = lm.sessionsBrief(uSuid)
+    maintTable = lm.maintTable(uSuid)
+    return render_template('etemp_maintenance.html', ses=session, costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modal1, calDate=now,maintTable=maintTable)
 
 @app.route("/ice_time")
+@login_required
 def iceTime():
-    maint = lm.uMantenanceV2(AuthSkaterUUID)
-    sessions = lm.sessionsFull(AuthSkaterUUID)
-    hLast = float(lm.icetimeLast(AuthSkaterUUID))
-    hCurrent = float(lm.icetimeCurrent(AuthSkaterUUID))
+
+    uSuid = session.get('uSkaterUUID')
+    print('SUID IS: ', uSuid)
+    maint = lm.uMantenanceV2(uSuid)
+    sessionTable = lm.sessionsBrief(uSuid)
+    modal1 = lj.sessionModal()
+    hours = lm.addHoursTotal(uSuid)
+    now = datetime.date.today()
+    costs = lm.addCostsTotal(uSuid)
+    cHours = lm.monthlyCoachTime(uSuid)
+    sHours = lm.monthlyIceTime(uSuid)
+    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
+
+    maint = lm.uMantenanceV2(uSuid)
+    sessions = lm.sessionsFull(uSuid)
+    hLast = float(lm.icetimeLast(uSuid))
+    hCurrent = float(lm.icetimeCurrent(uSuid))
     hStatus = "normal"
     if hCurrent > hLast:
         hStatus = "text-success"
@@ -128,8 +229,8 @@ def iceTime():
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
 
-    inlineLast = float(lm.inlinetimeLast(AuthSkaterUUID))
-    inlineCurrent = float(lm.inlinetimeCurrent(AuthSkaterUUID))
+    inlineLast = float(lm.inlinetimeLast(uSuid))
+    inlineCurrent = float(lm.inlinetimeCurrent(uSuid))
     inlineStatus = "normal"
     if inlineCurrent > inlineLast:
         inlineStatus = "text-success"
@@ -141,39 +242,48 @@ def iceTime():
         inlineStatus = "normal"
     inlineResults = [inlineLast,inlineCurrent,inlineStatus]
 
-    pData = lm.punchCard(AuthSkaterUUID)
-    return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, maint=maint, chart_body=sessions, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
+    pData = lm.punchCard(uSuid)
+    return render_template('etemp_icetime.html', ses=session, costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=modal1, calDate=now, pData=pData)
 
 @app.route('/api/json/areaTest', methods=['GET'])
+@login_required
 def areaTest():
-    session = json.loads(lj.areaTest(AuthSkaterUUID))
-    jsession = json.dumps(session, indent=4)
+    uSuid = session.get('uSkaterUUID')
+    JSONsession = json.loads(lj.areaTest(uSuid))
+    jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
 
 @app.route('/api/json/sessionsArea', methods=['GET'])
+@login_required
 def sessionsArea():
-    session = json.loads(lj.sessionsArea(AuthSkaterUUID))
-    jsession = json.dumps(session, indent=4)
+    uSuid = session.get('uSkaterUUID')
+    JSONsession = json.loads(lj.sessionsArea(uSuid))
+    jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
 
 @app.route('/api/json/sessionsFull', methods=['GET'])
+@login_required
 def sessionsFull():
-    session = json.loads(lj.sessionsFull())
-    jsession = json.dumps(session, indent=4)
+    uSuid = session.get('uSkaterUUID')
+    JSONsession = json.loads(lj.sessionsFull(uSuid))
+    jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
 
 @app.route('/api/json/sessionsBrief', methods=['GET'])
+@login_required
 def sessionsBrief():
-    session = json.loads(lj.sessionsBrief())
-    jsession = json.dumps(session, indent=4)
+    uSuid = session.get('uSkaterUUID')
+    JSONsession = json.loads(lj.sessionsBrief(uSuid))
+    jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
 
 
 @app.route('/submit_modalSession', methods=['POST'])
+@login_required
 def submit_modalSession():
     if request.method == 'POST':
         iceDate = request.form['date']
@@ -193,7 +303,10 @@ def submit_modalSession():
         return redirect(request.referrer)
 
 @app.route('/submit_modalMaintenance', methods=['POST'])
+@login_required
 def submit_modalMaintenance():
+    uSuid = session.get('uSkaterUUID')
+
     if request.method == 'POST':
         mDate = request.form['m_date']
         mOn = request.form['m_hours_on']
@@ -201,18 +314,13 @@ def submit_modalMaintenance():
         mLocation = request.form['locationID']
 
         sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location,uSkaterUUID)values(%s, %s, %s, %s,%s) """
-        recordTuple = (mDate,mOn,mCost,mLocation,AuthSkaterUUID)
+        recordTuple = (mDate,mOn,mCost,mLocation,uSuid)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:
         return redirect(request.referrer)
 
-@app.route('/logout')
-@login_required
-def logout():
-        session.pop('logged_in', None)
-        flash('You were logged out.')
-        return redirect(url_for('index'))
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, use_reloader=True, debug=True)
