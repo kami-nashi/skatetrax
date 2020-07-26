@@ -7,6 +7,7 @@ from flask import redirect
 from flask import session
 from flask import flash
 from flask import url_for
+from flask import g
 
 from functools import wraps
 
@@ -24,15 +25,17 @@ app.secret_key = 'password1'
 # Make Shift/Pretend logged in user
 AuthSkaterUUID = 1
 
-# Global Stuff
-now = datetime.date.today()
-modalSessions = lj.sessionModal()
-costs = lm.addCostsTotal(AuthSkaterUUID)
-hours = lm.addHoursTotal(AuthSkaterUUID)
-cHours = lm.monthlyCoachTime(AuthSkaterUUID)
-sHours = lm.monthlyIceTime(AuthSkaterUUID)
-uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
+@app.before_request
+def globalStuff():
+    # Global Stuff
+    g.now = datetime.date.today()
+    g.modalSessions = lj.sessionModal()
+    g.costs = lm.addCostsTotal(AuthSkaterUUID)
+    g.hours = lm.addHoursTotal(AuthSkaterUUID)
+    g.cHours = lm.monthlyCoachTime(AuthSkaterUUID)
+    g.sHours = lm.monthlyIceTime(AuthSkaterUUID)
+    g.uHours = math.ceil(g.sHours[0]['monthly_ice']*4)/4-math.ceil(g.cHours[0]['monthly_coach']*4)/4
+    g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
 
 # Login Decorator
 def login_required(f):
@@ -82,7 +85,7 @@ def login():
 def index():
     maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsBrief(AuthSkaterUUID)
-    return render_template('etemp_dashboard.html', ses=session, costs=costs, hours=mHours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now)
+    return render_template('etemp_dashboard.html', ses=session, costs=g.costs, hours=g.mHours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)
 
 @app.route("/journal")
 def journal():
@@ -92,21 +95,21 @@ def journal():
     else:
         print(jDate, 'its not empty')
         jTable = lm.jVideos(AuthSkaterUUID,jDate)
-    return render_template('etemp_journals.html', thour=hours[2], modal1=modalSessions, calDate=now, journalTable=jTable)
+    return render_template('etemp_journals.html', thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
 
 @app.route("/skater_overview")
 @login_required
 def skater_overview():
     sOff = lm.skaterOffBlades(AuthSkaterUUID)
     sIce = lm.skaterIceBlades(AuthSkaterUUID)
-    return render_template('etemp_skater_overview.html',ses=session, thour=hours[2], modal1=modalSessions, skateOff=sOff, skateIce=sIce)
+    return render_template('etemp_skater_overview.html',ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce)
 
 @app.route("/maintenance")
 def maintenance():
     maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsBrief(AuthSkaterUUID)
     maintTable = lm.maintTable(AuthSkaterUUID)
-    return render_template('etemp_maintenance.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modalSessions, calDate=now,maintTable=maintTable)
+    return render_template('etemp_maintenance.html', costs=g.costs, hours=g.hours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
 
 @app.route("/ice_time")
 def iceTime():
@@ -139,7 +142,7 @@ def iceTime():
     inlineResults = [inlineLast,inlineCurrent,inlineStatus]
 
     pData = lm.punchCard(AuthSkaterUUID)
-    return render_template('etemp_icetime.html', costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=modalSessions, calDate=now, pData=pData)
+    return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, maint=maint, chart_body=sessions, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
 
 @app.route('/api/json/areaTest', methods=['GET'])
 def areaTest():
@@ -184,7 +187,8 @@ def submit_modalSession():
         sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id,uSkaterUUID)values(%s, %s, %s, %s, %s, %s, %s, %s) """
         recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc,AuthSkaterUUID)
         lm.dbinsert(sql, recordTuple)
-        return redirect(request.referrer)
+        return redirect(url_for('index'))
+        #return redirect(request.referrer)
     else:
         return redirect(request.referrer)
 
