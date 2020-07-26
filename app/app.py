@@ -95,7 +95,7 @@ def journal():
     else:
         print(jDate, 'its not empty')
         jTable = lm.jVideos(AuthSkaterUUID,jDate)
-    return render_template('etemp_journals.html', thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
+    return render_template('etemp_journals.html', ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
 
 @app.route("/skater_overview")
 @login_required
@@ -109,7 +109,7 @@ def maintenance():
     maint = lm.uMantenanceV2(AuthSkaterUUID)
     sessions = lm.sessionsBrief(AuthSkaterUUID)
     maintTable = lm.maintTable(AuthSkaterUUID)
-    return render_template('etemp_maintenance.html', costs=g.costs, hours=g.hours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
+    return render_template('etemp_maintenance.html', ses=session, costs=g.costs, hours=g.hours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
 
 @app.route("/ice_time")
 def iceTime():
