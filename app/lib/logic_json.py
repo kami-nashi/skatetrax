@@ -30,7 +30,7 @@ def sessionsFull(uSkaterUUID=None):
 
 def sessionsBrief(uSkaterUUID=None):
     vTUP = (uSkaterUUID)
-    sql = 'select * from ice_time, coaches, locations, ice_type where where ice_time.uSkaterUUID = %s and ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date > (NOW() - INTERVAL 14 DAY) ORDER BY date DESC'
+    sql = 'select * from ice_time, coaches, locations, ice_type where ice_time.uSkaterUUID = %s and ice_time.coach_id = ice_time.coach_id and coaches.id = ice_time.coach_id and locations.id = ice_time.rink_id and ice_type.id = ice_time.skate_type and ice_time.date > (NOW() - INTERVAL 14 DAY) ORDER BY date DESC'
     results = st.dbconnect(sql,vTUP)
     dump = []
     for i in results:

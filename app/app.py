@@ -21,25 +21,24 @@ import lib.logic_main as lm
 
 app = Flask(__name__)
 app.secret_key = 'password1'
-global AnotherUUID
+
 @app.before_request
-def globalStuff():
-
-
-    # Look to see if we're logged in. If not, ignore user specific stuff and move on
-    g.AuthSkaterUUID = None
-    if g.AuthSkaterUUID == None:
+def load_session_from_cookie():
+    try:
+        if session['logged_in'] == True:
+            g.sessID = session.get('uSkaterUUID')
+            g.now = datetime.date.today()
+            g.modalSessions = lj.sessionModal()
+            g.costs = lm.addCostsTotal(g.sessID)
+            g.hours = lm.addHoursTotal(g.sessID)
+            g.cHours = lm.monthlyCoachTime(g.sessID)
+            g.sHours = lm.monthlyIceTime(g.sessID)
+            g.uHours = math.ceil(g.sHours[0]['monthly_ice']*4)/4-math.ceil(g.cHours[0]['monthly_coach']*4)/4
+            g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
+            g.maint = lm.uMantenanceV2(g.sessID)
+            g.sessions = lm.sessionsBrief(g.sessID)
+    except:
         pass
-    else:
-        # Global Stuff
-        g.now = datetime.date.today()
-        g.modalSessions = lj.sessionModal()
-        g.costs = lm.addCostsTotal(session.get('uSkaterUUID'))
-        g.hours = lm.addHoursTotal(session.get('uSkaterUUID'))
-        g.cHours = lm.monthlyCoachTime(session.get('uSkaterUUID'))
-        g.sHours = lm.monthlyIceTime(session.get('uSkaterUUID'))
-        g.uHours = math.ceil(g.sHours[0]['monthly_ice']*4)/4-math.ceil(g.cHours[0]['monthly_coach']*4)/4
-        g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
 
 # Login Decorator
 def login_required(f):
@@ -63,10 +62,7 @@ def home():
     sql = "select * from uSkaterConfig where uSkaterUUID = %s"
     subUserUUID = session['sUUID']
     results = lm.dbconnect(sql,subUserUUID)
-    maint = lm.uMantenanceV2(AuthSkaterUUID)
-    sessions = lm.sessionsBrief(AuthSkaterUUID)
-    return render_template('etemp_dashboard.html', ses=session, costs=g.costs, hours=g.mHours, maint=maint, chart_body=sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)  # render a template
-    # return "Hello, World!"  # return a string
+    return render_template('etemp_dashboard.html', ses=session, costs=g.costs, hours=g.mHours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)  # render a template
 
 @app.route('/logout')
 @login_required
@@ -105,6 +101,7 @@ def login():
                 session['fName'] = aUserInfo[0]['uSkaterFname']
                 session['lName'] = aUserInfo[0]['uSkaterLname']
                 session['uSkaterUUID'] = aUserInfo[0]['uSkaterUUID']
+                g.sessID = session.get('uSkaterUUID')
             else:
                 pass
             flash('You were logged in.')
@@ -115,109 +112,37 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    uSuid = session.get('uSkaterUUID')
-    print('SUID IS: ', uSuid)
-    maint = lm.uMantenanceV2(uSuid)
-    sessionTable = lm.sessionsBrief(uSuid)
-    modal1 = lj.sessionModal()
-    hours = lm.addHoursTotal(uSuid)
-    now = datetime.date.today()
-    costs = lm.addCostsTotal(uSuid)
-    cHours = lm.monthlyCoachTime(uSuid)
-    sHours = lm.monthlyIceTime(uSuid)
-    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
-
-    return render_template('etemp_dashboard.html', modal1=modal1, ses=session, thour=hours[2], hours=mHours, costs=costs, maint=maint, chart_body=sessionTable )
-
+    return render_template('etemp_dashboard.html', modal1=g.modalSessions, ses=session, thour=g.hours[2], hours=g.mHours, costs=g.costs, maint=g.maint, chart_body=g.sessions )
 
 @app.route("/journal")
 @login_required
 def journal():
-    uSuid = session.get('uSkaterUUID')
-    print('SUID IS: ', uSuid)
-    maint = lm.uMantenanceV2(uSuid)
-    sessionTable = lm.sessionsBrief(uSuid)
-    modal1 = lj.sessionModal()
-    hours = lm.addHoursTotal(uSuid)
-    now = datetime.date.today()
-    costs = lm.addCostsTotal(uSuid)
-    cHours = lm.monthlyCoachTime(uSuid)
-    sHours = lm.monthlyIceTime(uSuid)
-    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
     jDate = request.args.get('date', default = '', type = str)
     if jDate == '':
-        jTable = lm.jVideos(uSuid,jv=0)
+        jTable = lm.jVideos(g.sessID,jv=0)
     else:
         print(jDate, 'its not empty')
-        jTable = lm.jVideos(uSuid,jDate)
-    return render_template('etemp_journals.html', ses=session, thour=hours[2], modal1=modal1, calDate=now, journalTable=jTable)
+        jTable = lm.jVideos(g.sessID,jDate)
+    return render_template('etemp_journals.html', ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
 
 @app.route("/skater_overview")
 @login_required
 def skater_overview():
-
-    uSuid = session.get('uSkaterUUID')
-    print('SUID IS: ', uSuid)
-    maint = lm.uMantenanceV2(uSuid)
-    sessionTable = lm.sessionsBrief(uSuid)
-    modal1 = lj.sessionModal()
-    hours = lm.addHoursTotal(uSuid)
-    now = datetime.date.today()
-    costs = lm.addCostsTotal(uSuid)
-    cHours = lm.monthlyCoachTime(uSuid)
-    sHours = lm.monthlyIceTime(uSuid)
-    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
-
-    sOff = lm.skaterOffBlades(uSuid)
-    sIce = lm.skaterIceBlades(uSuid)
-    return render_template('etemp_skater_overview.html',ses=session, thour=hours[2], modal1=modal1, skateOff=sOff, skateIce=sIce)
+    sOff = lm.skaterOffBlades(g.sessID)
+    sIce = lm.skaterIceBlades(g.sessID)
+    return render_template('etemp_skater_overview.html',ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce)
 
 @app.route("/maintenance")
 @login_required
 def maintenance():
-
-    uSuid = session.get('uSkaterUUID')
-    print('SUID IS: ', uSuid)
-    maint = lm.uMantenanceV2(uSuid)
-    sessionTable = lm.sessionsBrief(uSuid)
-    modal1 = lj.sessionModal()
-    hours = lm.addHoursTotal(uSuid)
-    now = datetime.date.today()
-    costs = lm.addCostsTotal(uSuid)
-    cHours = lm.monthlyCoachTime(uSuid)
-    sHours = lm.monthlyIceTime(uSuid)
-    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
-
-    maint = lm.uMantenanceV2(uSuid)
-    sessions = lm.sessionsBrief(uSuid)
-    maintTable = lm.maintTable(uSuid)
-    return render_template('etemp_maintenance.html', ses=session, costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], modal1=modal1, calDate=now,maintTable=maintTable)
+    maintTable = lm.maintTable(g.sessID)
+    return render_template('etemp_maintenance.html', ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
 
 @app.route("/ice_time")
 @login_required
 def iceTime():
-
-    uSuid = session.get('uSkaterUUID')
-    print('SUID IS: ', uSuid)
-    maint = lm.uMantenanceV2(uSuid)
-    sessionTable = lm.sessionsBrief(uSuid)
-    modal1 = lj.sessionModal()
-    hours = lm.addHoursTotal(uSuid)
-    now = datetime.date.today()
-    costs = lm.addCostsTotal(uSuid)
-    cHours = lm.monthlyCoachTime(uSuid)
-    sHours = lm.monthlyIceTime(uSuid)
-    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-    mHours = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4]
-
-    maint = lm.uMantenanceV2(uSuid)
-    sessions = lm.sessionsFull(uSuid)
-    hLast = float(lm.icetimeLast(uSuid))
-    hCurrent = float(lm.icetimeCurrent(uSuid))
+    hLast = float(lm.icetimeLast(g.sessID))
+    hCurrent = float(lm.icetimeCurrent(g.sessID))
     hStatus = "normal"
     if hCurrent > hLast:
         hStatus = "text-success"
@@ -229,8 +154,8 @@ def iceTime():
         hStatus = "normal"
     hResults = [hLast,hCurrent,hStatus]
 
-    inlineLast = float(lm.inlinetimeLast(uSuid))
-    inlineCurrent = float(lm.inlinetimeCurrent(uSuid))
+    inlineLast = float(lm.inlinetimeLast(g.sessID))
+    inlineCurrent = float(lm.inlinetimeCurrent(g.sessID))
     inlineStatus = "normal"
     if inlineCurrent > inlineLast:
         inlineStatus = "text-success"
@@ -242,14 +167,13 @@ def iceTime():
         inlineStatus = "normal"
     inlineResults = [inlineLast,inlineCurrent,inlineStatus]
 
-    pData = lm.punchCard(uSuid)
-    return render_template('etemp_icetime.html', ses=session, costs=costs, hours=hours, maint=maint, chart_body=sessions, thour=hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=modal1, calDate=now, pData=pData)
+    pData = lm.punchCard(g.sessID)
+    return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
 
 @app.route('/api/json/areaTest', methods=['GET'])
 @login_required
 def areaTest():
-    uSuid = session.get('uSkaterUUID')
-    JSONsession = json.loads(lj.areaTest(uSuid))
+    JSONsession = json.loads(lj.areaTest(g.sessID))
     jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
@@ -257,8 +181,7 @@ def areaTest():
 @app.route('/api/json/sessionsArea', methods=['GET'])
 @login_required
 def sessionsArea():
-    uSuid = session.get('uSkaterUUID')
-    JSONsession = json.loads(lj.sessionsArea(uSuid))
+    JSONsession = json.loads(lj.sessionsArea(g.sessID))
     jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
@@ -266,8 +189,7 @@ def sessionsArea():
 @app.route('/api/json/sessionsFull', methods=['GET'])
 @login_required
 def sessionsFull():
-    uSuid = session.get('uSkaterUUID')
-    JSONsession = json.loads(lj.sessionsFull(uSuid))
+    JSONsession = json.loads(lj.sessionsFull(g.sessID))
     jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
@@ -275,8 +197,7 @@ def sessionsFull():
 @app.route('/api/json/sessionsBrief', methods=['GET'])
 @login_required
 def sessionsBrief():
-    uSuid = session.get('uSkaterUUID')
-    JSONsession = json.loads(lj.sessionsBrief(uSuid))
+    JSONsession = json.loads(lj.sessionsBrief(g.sessID))
     jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp

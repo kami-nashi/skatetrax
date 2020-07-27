@@ -379,12 +379,12 @@ def jVideos(AuthSkaterUUID,jv):
 
 def skaterOffBlades(AuthSkaterUUID):
     vTUP = AuthSkaterUUID
-    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboOff = uSkateConfig.ID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
+    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboOff = uSkateConfig.aSkateConfigID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
     results = dbconnect(sql,vTUP)
     return results
 
 def skaterIceBlades(AuthSkaterUUID):
     vTUP = AuthSkaterUUID
-    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboIce = uSkateConfig.ID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
+    sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboIce = uSkateConfig.aSkateConfigID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
     results = dbconnect(sql,vTUP)
     return results
