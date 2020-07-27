@@ -1,23 +1,52 @@
 <html>
-  <head>
-    <title>SkateTrax - Login Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
-  </head>
-  <body>
-    <div class="container">
-      <h1>Please login</h1>
-      <br>
-      <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" value="{{
-          request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{
-          request.form.password }}">
-        <input class="btn btn-default" type="submit" value="Login">
-      </form>
-      {% if error %}
-        <p class="error"><strong>Error:</strong> {{ error }}
-      {% endif %}
+<head>
+  <title>SkateTrax - Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="{{ url_for('static', filename='v3/css/bootstrap-table.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <!-- Custom fonts for this template-->
+  <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+
+  <!-- Page level plugin CSS-->
+  <link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="{{ url_for('static', filename='css/sb-admin.css') }}" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="card card-signin my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Sign In</h5>
+            <form action="" method="post" class="form-signin">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="Username" name="username" value="{{
+                  request.form.username }}">
+
+              </div>
+
+              <div class="form-label-group">
+                <input type="password" class="form-control" placeholder="Password" name="password" value="{{
+                 request.form.password }}">
+              </div>
+
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" value="Login" type="submit">Sign in</button>
+              <hr class="my-4">
+              {% if error %}
+                <p class="error"><strong>Error:</strong> {{ error }}
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
