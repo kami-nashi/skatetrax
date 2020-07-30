@@ -216,7 +216,7 @@ def submit_modalSession():
         coachTime = request.form['coach_time']
 
         sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id,uSkaterUUID)values(%s, %s, %s, %s, %s, %s, %s, %s) """
-        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc,AuthSkaterUUID)
+        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc,g.sessID)
         lm.dbinsert(sql, recordTuple)
         return redirect(url_for('index'))
         #return redirect(request.referrer)
@@ -235,7 +235,7 @@ def submit_modalMaintenance():
         mLocation = request.form['locationID']
 
         sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location,uSkaterUUID)values(%s, %s, %s, %s,%s) """
-        recordTuple = (mDate,mOn,mCost,mLocation,uSuid)
+        recordTuple = (mDate,mOn,mCost,mLocation,g.sessID)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:

@@ -168,36 +168,33 @@ def uMantenanceV2(AuthSkaterUUID=None):
     WHERE fSkater.uSkaterUUID = %s) actSkate
     WHERE ice_time.uSkaterUUID = actSkate.sUUID and ice_time.uSkaterConfig = actSkate.activeICE
     '''
-    getActiveMaintHours = 'select sum(m_hours_on) as mHours from maintenance, uSkaterConfig WHERE maintenance.uSkaterUUID = %s and (uSkaterConfig.uSkateComboIce = maintenance.conf_id)'
+    tHours = float(dbconnect(getActiveSkateHours, vTUP)[0]['tHours'])
+
+    # Get the ID of the active skates for skating on ice
+    getActiveIceConfig = 'select uSkateComboIce from uSkaterConfig where uSkaterUUID = %s'
+    comboIce = str(dbconnect(getActiveIceConfig,vTUP)[0]['uSkateComboIce'])
+
+    # Now, we need to get the amount of hours were on the blade at the time of sharpening, add a row for that on the maint_table as m_hours_on
+    getActiveMaintHours = 'select sum(m_hours_on) as mHours from maintenance WHERE maintenance.uSkaterUUID = %s and maintenance.conf_id = %s'
+    evTUP = (AuthSkaterUUID,comboIce)
+    aHours = float(dbconnect(getActiveMaintHours, evTUP)[0]['mHours'])
+
+    # Next, get the user's preferred maintenance clock
     getUserMaintLimit = 'select uSkaterMaintPref from uSkaterConfig where uSkaterUUID = %s'
-    getUserMaintSum = 'select sum(ifnull(m_cost, 0)) as mCost from maintenance WHERE maintenance.uSkaterUUID = %s'
-    results0 = dbconnect(getActiveSkateHours,vTUP)
-    results1 = dbconnect(getActiveMaintHours,vTUP)
-    results2 = dbconnect(getUserMaintLimit,vTUP)
-    fResult0 = results0[0]['tHours']
-    fResult1 = results1[0]['mHours']
-    fResult2 = float(results2[0]['uSkaterMaintPref'])
+    uLimit = float(dbconnect(getUserMaintLimit,vTUP)[0]['uSkaterMaintPref'])
 
-    if fResult0 is not None:        # if db returns null, give it a value of zero, or make it a float
-        fResult0 = float(fResult0)
-    else:
-        fResult0 = int('0')
+    # Get the amount of hours of difference between total icetime and maint_time.
+    # This tells us how many hours since our last sharpening
+    hDiff = tHours-aHours
 
-    if fResult1 is not None:        # again, # if db returns null, give it a value of zero, or make it a float
-        fResult1 = float(fResult1)
-    else:
-        fResult1 = int('0')
+    # Finally, subtract the above value from the user's preferred cycle time, telling us how many hours remaining
+    clockDown = uLimit-hDiff
 
-    results3 = fResult0-fResult1    # subtract total maintenance hours from total skate's time hours
-                                    #   which resets any bias on the blades clock against the user prefs
-                                    #   example - fResult0 = 104.75, fResult1=100 resets to 4.75 hours of
-                                    #   the user's prefs, because there are already 100 hours of maint time
-    results4 = fResult2-results3    # Hours remaining until maintenance time
-    results5 = dbconnect(getUserMaintSum,vTUP)
-    fResult3 = float(results5[0]['mCost'])
-    results = [fResult0,fResult1,fResult2,results4,fResult3]
-    return results
+    maintCost = 'select sum(m_cost) as m_cost from maintenance where uSkaterUUID = %s'
+    mCost = float(dbconnect(maintCost,vTUP)[0]['m_cost'])
 
+    maintenance = [tHours,aHours,uLimit,hDiff,clockDown,mCost]
+    return maintenance
 
 def maintTable(AuthSkaterUUID):
     vTUP = AuthSkaterUUID
@@ -211,7 +208,7 @@ def addTotals(AuthSkaterUUID):
     ice = icetimeAdd(AuthSkaterUUID)
     coach = coachtimeAdd2(AuthSkaterUUID)
     maint = uMantenanceV2(AuthSkaterUUID)
-    cost = [ice[0],coach[0],maint[4]]
+    cost = [ice[0],coach[0],maint[5]]
     return cost
 
 def addEventsC(AuthSkaterUUID):
@@ -272,8 +269,8 @@ def addCostsTotal(AuthSkaterUUID=None):
     eventsC = addEventsC(AuthSkaterUUID)
     eventsP = addEventsP(AuthSkaterUUID)
     timeCoach = coachtimeAdd2(AuthSkaterUUID)
-    total = (float(costEquip)+float(costMaint[4])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
-    query = [costEquip,costMaint[4],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
+    total = (float(costEquip)+float(costMaint[5])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
+    query = [costEquip,costMaint[5],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
     return query
 
 def addHoursTotal(AuthSkaterUUID = None):
