@@ -37,6 +37,7 @@ def load_session_from_cookie():
             g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
             g.maint = lm.uMantenanceV2(g.sessID)
             g.sessions = lm.sessionsBrief(g.sessID)
+            g.sessfull = lm.sessionsFull(g.sessID)
     except:
         pass
 
@@ -168,7 +169,7 @@ def iceTime():
     inlineResults = [inlineLast,inlineCurrent,inlineStatus]
 
     pData = lm.punchCard(g.sessID)
-    return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
+    return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessfull, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
 
 @app.route('/api/json/areaTest', methods=['GET'])
 @login_required
