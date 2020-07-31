@@ -2,7 +2,18 @@ import lib.logic_main as st
 import json
 import math
 
-def sessionsArea(uSkaterUUID):
+def monthlyPie(uSkaterUUID=None):
+    vTUP = uSkaterUUID
+    cHours = st.monthlyCoachTime(uSkaterUUID)
+    sHours = st.monthlyIceTime(uSkaterUUID)
+    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
+    mPVC = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4, float(sHours[0]['ice_cost'])]
+    dump = [ mPVC[0], mPVC[1],mPVC[2], int(100) ]
+    jdump = json.dumps(dump, indent=4, default=float)
+    return jdump
+
+
+def sessionsArea(uSkaterUUID=None):
     vTUP = (uSkaterUUID, uSkaterUUID)
     sql= "SELECT date_format(bam.date, '%%Y-%%m') as bDate, IFNULL(date_format(ice.date, '%%Y-%%m'), date_format(bam.date, '%%Y-%%m')) as iDate, IFNULL(sum(ice.ice_time/60), 0) as iTime, IFNULL(sum(ice.coach_time/60), 0) as cTime, IFNULL(ice.uSkaterUUID, %s) as uSuuid FROM (select * from ice_time where uSkaterUUID = %s) ice right JOIN baMonths bam ON date_format(bam.date, '%%Y-%%m') = date_format(ice.date, '%%Y-%%m') group by bam.date order by bam.date desc"
     results = st.dbconnect(sql, vTUP)
@@ -11,7 +22,7 @@ def sessionsArea(uSkaterUUID):
             dump.append({'date': str(i['bDate']), 'ice_time': format(float(i['iTime']), '.2f'), 'coach_time': format(math.ceil(float(i['cTime'])*4)/4, '.2f'), 'uuid': i['uSuuid']})
     jdump = json.dumps(dump, indent=4, default=str)
     return jdump
-    return jdump
+
 
 def sessionsFull(uSkaterUUID=None):
     vTUP = (uSkaterUUID, uSkaterUUID)

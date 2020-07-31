@@ -143,7 +143,7 @@ def coachtimeAdd2(AuthSkaterUUID=None):
 
 def monthlyIceTime(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
-    sql = "SELECT SUM(ice_time/60) AS monthly_ice FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
+    sql = "SELECT SUM(ice_time/60) AS monthly_ice, sum(ice_cost) AS ice_cost FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
     results = dbconnect(sql, vTUP)
     return results
 
