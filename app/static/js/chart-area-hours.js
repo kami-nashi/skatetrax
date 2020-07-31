@@ -79,14 +79,15 @@ getJSON('/api/json/sessionsArea', function(err, data) {
    	          display: false
    	        },
    	        ticks: {
-   	          maxTicksLimit: 8
+   	          maxTicksLimit: 8,
+              min: 0,
+              max: Math.max.apply(Math, chartLabels)+0.5,
    	        }
    	      }],
    	      yAxes: [{
    	        ticks: {
               min: 0,
-              max: Math.max.apply(Math, iceTimes)+.5,
-              maxTicksLimit: 5
+              max: Math.max.apply(Math, iceTimes)+1.0
             },
             gridLines: {
               color: "rgba(0, 0, 0, .125)",
