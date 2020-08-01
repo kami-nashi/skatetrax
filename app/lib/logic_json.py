@@ -2,6 +2,13 @@ import lib.logic_main as st
 import json
 import math
 
+def maintClock(uSkaterUUID=None):
+    vTUP = uSkaterUUID
+    maint = st.uMantenanceV2(vTUP)
+    dump = [maint[3],maint[4],maint[2]]
+    jdump = json.dumps(dump, indent=4, default=float)
+    return jdump
+
 def monthlyPie(uSkaterUUID=None):
     vTUP = uSkaterUUID
     cHours = st.monthlyCoachTime(uSkaterUUID)

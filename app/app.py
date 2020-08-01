@@ -173,10 +173,20 @@ def iceTime():
     pData = lm.punchCard(g.sessID)
     return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, mPVC=g.mPVC, maint=g.maint, chart_body=g.sessfull, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
 
+
+### JSON/API Stuff ###
 @app.route('/api/json/areaTest', methods=['GET'])
 @login_required
 def areaTest():
     JSONsession = json.loads(lj.areaTest(g.sessID))
+    jsession = json.dumps(JSONsession, indent=4)
+    resp = Response(jsession, status=200, mimetype='application/json')
+    return resp
+
+@app.route('/api/json/maintClock', methods=['GET'])
+@login_required
+def maintClock():
+    JSONsession = json.loads(lj.maintClock(g.sessID))
     jsession = json.dumps(JSONsession, indent=4)
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp

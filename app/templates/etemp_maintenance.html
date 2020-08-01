@@ -42,29 +42,8 @@
     </table>
  </div>
 <div class="col-2">
-<canvas id="doughnut-chart2" width="216" height="216" style="display: block; width: 216px; height: 216px;"></canvas>
-<script>
-new Chart(document.getElementById("doughnut-chart2"), {
-    type: "doughnut",
-    data: {
-      labels: ["Hours Currently", ""],
-      datasets: [
-        {
-          label: "Maintenance Hours",
-          backgroundColor: ["#70db70", "#009900"],
-          data: [{{ maint[3] }},{{ maint[4] }}]
-        }
-      ]
-    },
-    options: {
-      title: {
-        display: false,
-        text: "Hours Clock"
-      }
-    }
-});
-</script>
-</div></div>
+<canvas id="doughnut-chart10" width="516" height="516" style="display: block; width: 516px; height: 516px;"></canvas></div>
+</div>
 
 
 {%endblock%}
@@ -83,5 +62,6 @@ new Chart(document.getElementById("doughnut-chart2"), {
 {% endfor %}
 
 </tbody>
-
+<script> var apiUrl_maintClock="/api/json/maintClock";</script>
+<script src="{{ url_for('static', filename='js/charts_maint.js') }}" type="text/javascript"></script>
 {% endblock %}
