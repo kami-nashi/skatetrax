@@ -1,89 +1,20 @@
 {% extends "template.html" %}
 
 {% block chart1 %}
-<section class="row text-center placeholders">
-<div class="col-6 col-sm-2 placeholder">
+<section class="row text-center placeholders align-items-center">
+<div class="col-2 col-sm-2 placeholder "></div>
+  <div class="col-2 col-sm-2 placeholder ">
+    <canvas id="doughnut-chart20" width="1016" height="1016" style="display: block; width: 1016px; height: 1016px;"></canvas>
+  </div>
 
-    <table class="table table" style="width:auto;" align="center">
-        <thead>
-        <tr>
-            <th colspan="2" class="text-center"> Financial Overview </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[0]) }}</td>
-            <td class="text-left"> Equipment </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[1]) }}</td>
-            <td class="text-left"> Maintenance </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[2]) }}</td>
-            <td class="text-left"> Class Fees </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[3]) }}</td>
-            <td class="text-left"> Performance Fees </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[4]) }}</td>
-            <td class="text-left"> Membership Fees </td>
-        </tr><tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[5]) }}</td>
-            <td class="text-left"> Competition Fees </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[6]) }}</td>
-            <td class="text-left"> Ice Time </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[7]) }}</td>
-            <td class="text-left"> Coaching Cost </td>
-        </tr>
-        </tbody>
-    </table>
-              <h4>Total</h4>
-              <div class="text-muted">{{ "${:,.2f}".format(costs[8]) }}</div></div>
-
-    <div class="col-4 col-sm-2 placeholder">
-        <canvas id="pie-chart" width="250" height="250" style="display: block;"></canvas>
+  <div class="col-4 col-sm-4 placeholder">
+    <canvas id="doughnut-chart00" width="1516" height="1516" style="display: block; width: 1516px; height: 1516px;"></canvas>
     </div>
 
-    <script>
-        new Chart(document.getElementById("pie-chart"), {
-        type: "pie",
-        data: {
-          labels: ["Equipment", "Maintenance", "Class Fees", "Performance", "Membership Fees", "Competition Fees", "Ice Time", "Coaching Cost"],
-          datasets: [{
-          label: "Totals",
-          backgroundColor: ["#3e95cd","#8e5ea2","#3cba9f","#e8c3b9","#c45850","#4cc5b7","#d816e0","#3d86e8"],
-          data: [{{ costs[0] }},{{ costs[1] }},{{ costs[2] }},{{ costs[3] }},{{ costs[4] }},{{ costs[5] }},{{ costs[6] }},{{ costs[7] }}]
-          }]
-        },
-        options: {
-          title: {
-            display: true,
-            fontSize: 20,
-            text: "Financial Totals"
-          },
-         legend: {
-            display: false,
-            }
-        }
-    });
-    </script>
-
-
-<div class="col-6 col-sm-2 placeholder">
-<canvas id="doughnut-chart3" width="516" height="516" style="display: block; width: 516px; height: 516px;"></canvas>
+  <div class="col-2 col-sm-2 placeholder">
+    <canvas id="doughnut-chart10" width="1016" height="1016" style="display: block; width: 1016px; height: 1016px;"></canvas>
 </div>
-<div class="col-6 col-sm-2 placeholder">
-
-<canvas id="doughnut-chart10" width="516" height="516" style="display: block; width: 516px; height: 516px;"></canvas>
-</div>
-</div>
+<div class="col-2 col-sm-2 placeholder "></div>
 </section>
 {%endblock%}
 
@@ -115,8 +46,13 @@
 {% block chart_js %}
 <script> var apiUrl_sessions="/api/json/sessionsBrief";</script>
 <script src="{{ url_for('static', filename='js/datatables.js') }}"></script>
+
+<script> var apiUrl_budget="/api/json/budget";</script>
+<script src="{{ url_for('static', filename='js/charts_budget.js') }}" type="text/javascript"></script>
+
 <script> var apiUrl_monthlyPie="/api/json/monthlyPie";</script>
 <script src="{{ url_for('static', filename='js/charts_monthlyCoaching.js') }}" type="text/javascript"></script>
+
 <script> var apiUrl_maintClock="/api/json/maintClock";</script>
 <script src="{{ url_for('static', filename='js/charts_maint.js') }}" type="text/javascript"></script>
 

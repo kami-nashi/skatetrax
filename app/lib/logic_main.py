@@ -251,6 +251,15 @@ def addEventsP(AuthSkaterUUID):
         pCost += i['e_cost']
     return pCost
 
+def addEventsT(AuthSkaterUUID):
+    tCost = 0
+    vTUP = AuthSkaterUUID
+    sql = 'SELECT * FROM events_t WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
+    for i in results:
+        tCost += i['e_cost']
+    return tCost
+
 def addEquip(AuthSkaterUUID):
     eCost = 0
     vTUP = (AuthSkaterUUID,AuthSkaterUUID,AuthSkaterUUID)
@@ -281,6 +290,15 @@ def addSchool(AuthSkaterUUID):
         classCost += i['class_cost']
     return classCost
 
+def addCamp(AuthSkaterUUID):
+    campCost = 0
+    vTUP = AuthSkaterUUID
+    sql = 'SELECT * FROM skate_camp WHERE uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
+    for i in results:
+        campCost += i['class_cost']
+    return campCost
+
 def addCostsTotal(AuthSkaterUUID=None):
     # x = format(value, ',d')
     costMaint = uMantenanceV2(AuthSkaterUUID)
@@ -293,6 +311,22 @@ def addCostsTotal(AuthSkaterUUID=None):
     timeCoach = coachtimeAdd2(AuthSkaterUUID)
     total = (float(costEquip)+float(costMaint[5])+float(costClass)+float(eventsP)+float(costClub)+float(eventsC)+float(costIce[1])+float(timeCoach[0]))
     query = [costEquip,costMaint[5],costClass,eventsP,costClub,eventsC,costIce[1],timeCoach[0],total]
+    return query
+
+def addCostsAPI(AuthSkaterUUID=None):
+    print(addEquip(AuthSkaterUUID))
+    costCoaching = coachtimeAdd2(AuthSkaterUUID)
+    costIcetime = icetimeAdd(AuthSkaterUUID)
+    costEquip = addEquip(AuthSkaterUUID)
+    costMaint = uMantenanceV2(AuthSkaterUUID)
+    costComp = float(addEventsC(AuthSkaterUUID))
+    costPerf = float(addEventsP(AuthSkaterUUID))
+    costTest = float(addEventsT(AuthSkaterUUID))
+    costMemb = float(addClub(AuthSkaterUUID))
+    costClass = float(addSchool(AuthSkaterUUID))
+    costCamp = float(addCamp(AuthSkaterUUID))
+    addCostsTotal = (float(costCoaching[0])+float(costIcetime[1])+float(costEquip)+float(costMaint[5])+costComp+costPerf+costTest+costMemb+costClass+costCamp)
+    query = [round(float(costCoaching[0]), 2),round(float(costIcetime[1]), 2),round(float(costEquip), 2),round(float(costMaint[5]), 2),round(costComp, 2),round(costPerf, 2),round(costTest, 2),round(costMemb, 2),round(costClass, 2),round(costCamp, 2),round(addCostsTotal, 2)]
     return query
 
 def addHoursTotal(AuthSkaterUUID = None):

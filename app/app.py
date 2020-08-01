@@ -183,6 +183,14 @@ def areaTest():
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
 
+@app.route('/api/json/budget', methods=['GET'])
+@login_required
+def budget():
+    JSONsession = json.loads(lj.budget(g.sessID))
+    jsession = json.dumps(JSONsession, indent=4)
+    resp = Response(jsession, status=200, mimetype='application/json')
+    return resp
+
 @app.route('/api/json/maintClock', methods=['GET'])
 @login_required
 def maintClock():

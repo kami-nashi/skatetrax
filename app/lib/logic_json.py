@@ -9,6 +9,12 @@ def maintClock(uSkaterUUID=None):
     jdump = json.dumps(dump, indent=4, default=float)
     return jdump
 
+def budget(uSkaterUUID=None):
+    vTUP = uSkaterUUID
+    dump = st.addCostsAPI(uSkaterUUID)
+    jdump = json.dumps(dump, indent=4, default=float)
+    return jdump
+
 def monthlyPie(uSkaterUUID=None):
     vTUP = uSkaterUUID
     cHours = st.monthlyCoachTime(uSkaterUUID)
