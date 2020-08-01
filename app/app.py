@@ -189,6 +189,14 @@ def monthlyPie():
     resp = Response(jsession, status=200, mimetype='application/json')
     return resp
 
+@app.route('/api/json/monthlyPieCost', methods=['GET'])
+@login_required
+def monthlyPieCost():
+    JSONsession = json.loads(lj.monthlyPieCost(g.sessID))
+    jsession = json.dumps(JSONsession, indent=4)
+    resp = Response(jsession, status=200, mimetype='application/json')
+    return resp
+
 @app.route('/api/json/sessionsArea', methods=['GET'])
 @login_required
 def sessionsArea():

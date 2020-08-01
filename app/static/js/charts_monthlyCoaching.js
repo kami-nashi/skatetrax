@@ -3,8 +3,13 @@ var DEFAULT_COLORS2 = ['#7fb7be', '#357266', '#dacc3e', '#bc2c1a', '#7d1538'];
 var SKATETRAX_COLORS1 = ["#3d86e8", "#d816e0"];
 var ctx = document.getElementById("doughnut-chart3").getContext('2d');
 
-var iceTimes = [];
-var coachTimes = [];
+var myPieChart;
+var chartLabels = [];
+var mIceTimes;
+var mCoachTimes;
+var yIceTimes;
+var yCoachTimes;
+var datas = [];
 
 var getJSON = function(url, callback) {
   var xhr = new XMLHttpRequest();
@@ -25,28 +30,30 @@ getJSON(apiUrl_monthlyPie, function(err, data) {
   if (err !== null) {
     alert('Something went wrong: ' + err);
   } else {
-      iceTimes.push(data[0]),
-      coachTimes.push(data[1])
-}});
+    for (let i=0; i<data.length; ++i) {
+      mIceTimes = data[0];
+      mCoachTimes = data[1];
+      yIceTimes = data[2];
+      yCoachTimes = data[3];
+      datas = [mIceTimes, mCoachTimes,yIceTimes,yCoachTimes];
 
-new Chart(ctx, {
+    }
+  myPieChart2 = new Chart(ctx, {
 	type: 'doughnut',
 	data: {
 		datasets: [
-
       {
-        backgroundColor: ["#3d86e8", "#d816e0"],
-        data: [ 1,2],
-        label: 'Training & Practice Costs',
-        labels: ["Training Costs","Practice Costs"],
+        backgroundColor: ["#d816e0", "#3d86e8"],
+        data: [datas[2],datas[3]],
+        label: 'Yearly Overview',
+        labels: [ "Yearly Practice","Yearly Coached"],
       },{
-        backgroundColor: ["#3d86e8", "#d816e0"],
-        data: [1,2],//[apiUrl_monthlyPie[2],apiUrl_monthlyPie[0]],
-        label: 'Training & Practice Hours',
-        labels: ["Training Hours","Practice Hours"],
+        backgroundColor: ["#d816e0", "#3d86e8"],
+        data: [datas[0],datas[1]],
+        label: 'Monthly Overview',
+        labels: ["Monthly Practice","Monthly Coached"],
       },
      ]
-
 	},
 	options: {
 		responsive: true,
@@ -54,10 +61,19 @@ new Chart(ctx, {
 			display: false,
 			position: 'top',
 		},
+    tooltips: {
+  callbacks: {
+   label: function(tooltipItem, data) {
+     var dataset = data.datasets[tooltipItem.datasetIndex];
+     var index = tooltipItem.index;
+     return dataset.labels[index] + ": " + dataset.data[index];
+   }
+  }
+},
 		title: {
-			display: false,
+			display: true,
 			fontSize: 20,
-			text: 'Multiple lines of text'
+			text: 'Hours Overview'
 		},
 		animation: {
 			animateScale: true,
@@ -67,31 +83,27 @@ new Chart(ctx, {
 			doughnutlabel: {
 				labels: [
 					{
-						text: 'Hours Practiced: ' + iceTimes,
+						text: 'Monthly:',
+            font: {
+            weight: 'bold',
+          },
 					},
+          {
+            text: datas[1] + ' / ' + datas[0],
+          },
 					{
-						text: 'Hours Coached: ' + coachTimes,
-						color: 'grey'
+						text: 'Yearly:',
+            font: {
+            weight: 'bold',
+          },
 					},
-					{
-						text: 'Practice Costs: $' + 3,//apiUrl_monthlyPie[2],
-						//color: 'red'
-					},
-					{
-						text: 'Coach Costs: $' + 4,//apiUrl_monthlyPie[0],
-						//color: 'green'
-					}
+          {
+            text: datas[3] + ' / ' + datas[2],
+          }
 				]
 			}
 		}
 	},
-  tooltips: {
-callbacks: {
- label: function(tooltipItem, data) {
-   var dataset = data.datasets[tooltipItem.datasetIndex];
-   var index = tooltipItem.index;
-   return dataset.labels[index] + ": " + dataset.data[index];
- }
-}
-}
 });
+
+}});

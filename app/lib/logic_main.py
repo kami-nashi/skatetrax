@@ -141,6 +141,28 @@ def coachtimeAdd2(AuthSkaterUUID=None):
     query = [coachCost,coachHours,coachMinutes,coachRate,coachTime,coachConversion]
     return query
 
+# Good luck figuring this one out. Sigh.
+def monthlycoachtimeAdd2(AuthSkaterUUID=None):
+    coachTime = 0
+    coachRate = 0
+    coachConversion = 0
+    coachCost = 0
+    coachMinutes = 0
+    vTUP = (AuthSkaterUUID)
+    sql = 'SELECT ice_time.*, coaches.* FROM ice_time, coaches WHERE ice_time.uSkaterUUID = %s AND ice_time.coach_id = coaches.id AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))'
+    results = dbconnect(sql, vTUP)
+    for i in results:
+        coachMinutes += i['coach_time']
+        coachTime = i['coach_time']
+        coachRate =i['coach_rate']
+        coachConversion = i['coach_rate'] / 30
+        coachCost += coachTime * coachConversion
+    coachHours = coachMinutes / 60
+    coachTotal = coachMinutes * coachConversion
+    query = [coachCost,coachHours,coachMinutes,coachRate,coachTime,coachConversion]
+    return query
+
+
 def monthlyIceTime(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
     sql = "SELECT SUM(ice_time/60) AS monthly_ice, sum(ice_cost) AS ice_cost FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"

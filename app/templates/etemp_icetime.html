@@ -103,89 +103,10 @@
     </table>
 </div>
 
-<div class="col-2">
-<canvas id="doughnut-chart" width="227" height="227" style="display: block; width: 227px; height: 227px;"></canvas>
-<script>
-new Chart(document.getElementById("doughnut-chart"), {
-    type: "doughnut",
-    data: {
-      labels: ["Coached", "Uncoached"],
-      datasets: [
-        {
-          label: "Training Hours",
-          backgroundColor: ["#3d86e8", "#d816e0"],
-          data: [{{ hours[1] }},{{ hours[0] }}]
-        }
-      ]
-    },
-    options: {
-      title: {
-        display: false,
-        text: "Amount of hours coached vs uncoached"
-      }
-    }
-});
-</script>
-    <table class="table table" style="width:auto;" align="center">
-        <thead>
-        <tr>
-            <th colspan="2" class="text-center"> Total Training Hours </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="small">
-            <td class="text-right">{{ hours[1] }}</td>
-            <td class="text-left"> Coached Hours </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ hours[0] }}</td>
-            <td class="text-left"> Uncoached Hours </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<div class="col-2" style="align='center'">
+<canvas id="doughnut-chart3" width="227" height="227" style="display: block; width: 227px; height: 227px; align='center'; "></canvas>
 
-<div class="col-2">
-<canvas id="doughnut-chart2" width="216" height="216" style="display: block; width: 216px; height: 216px;"></canvas>
-<script>
-new Chart(document.getElementById("doughnut-chart2"), {
-    type: "doughnut",
-    data: {
-      labels: ["Coached", "Uncoached"],
-      datasets: [
-        {
-          label: "Training Costs",
-          backgroundColor: ["#3d86e8", "#d816e0"],
-          data: [{{ costs[6] }},{{ costs[7] }}]
-        }
-      ]
-    },
-    options: {
-      title: {
-        display: false,
-        text: "Amount of dollars coached vs uncoached"
-      }
-    }
-});
-</script>
-
-    <table class="table table" style="width:auto;" align="center">
-        <thead>
-        <tr>
-            <th colspan="2" class="text-center"> Training Budget </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[6]) }}</td>
-            <td class="text-left"> Coached </td>
-        </tr>
-        <tr class="small">
-            <td class="text-right">{{ "${:,.2f}".format(costs[7]) }}</td>
-            <td class="text-left"> Uncoached </td>
-        </tr>
-        </tbody>
-    </table>
+<canvas id="doughnut-chart2" width="227" height="227" style="display: block; width: 227px; height: 227px; align='center'; "></canvas>
 </div></div>
 
 
@@ -221,6 +142,11 @@ new Chart(document.getElementById("doughnut-chart2"), {
 <script> var apiUrl_sessions="/api/json/sessionsArea";</script>
 <script src="{{ url_for('static', filename='js/session_chart.js') }}"></script>
 
+<script> var apiUrl_monthlyPie="/api/json/monthlyPie";</script>
+<script src="{{ url_for('static', filename='js/charts_monthlyCoaching.js') }}" type="text/javascript"></script>
+
+<script> var apiUrl_monthlyCost="/api/json/monthlyPieCost";</script>
+<script src="{{ url_for('static', filename='js/charts_monthlyCost.js') }}" type="text/javascript"></script>
 
 
 {% endblock %}

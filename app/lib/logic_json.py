@@ -8,10 +8,21 @@ def monthlyPie(uSkaterUUID=None):
     sHours = st.monthlyIceTime(uSkaterUUID)
     uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
     mPVC = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4, float(sHours[0]['ice_cost'])]
-    dump = [ mPVC[0], mPVC[1],mPVC[2], int(100) ]
+    yIce = st.addHoursTotal(uSkaterUUID)[0]
+    yCoach = st.addHoursTotal(uSkaterUUID)[1]
+    dump = [ mPVC[0], mPVC[1],yIce, yCoach ]
     jdump = json.dumps(dump, indent=4, default=float)
     return jdump
 
+def monthlyPieCost(uSkaterUUID=None):
+    vTUP = uSkaterUUID
+    ycIce = math.ceil(float(st.icetimeAdd(vTUP)[1])*4)/4
+    ycCoach = math.ceil(float(st.coachtimeAdd2(vTUP)[0])*4)/4
+    mcIce = math.ceil(float(st.monthlyIceTime(vTUP)[0]['ice_cost'])*4)/4
+    mcCoach = math.ceil(float(st.monthlycoachtimeAdd2(vTUP)[0])*4)/4
+    dump = [mcIce, mcCoach,ycIce,ycCoach]
+    jdump = json.dumps(dump, indent=4, default=float)
+    return jdump
 
 def sessionsArea(uSkaterUUID=None):
     vTUP = (uSkaterUUID, uSkaterUUID)
