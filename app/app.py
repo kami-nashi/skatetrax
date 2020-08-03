@@ -54,14 +54,14 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 # Landing Page
-@app.route('/welcome')
-def index():
+@app.route('/')
+def home():
     return render_template('unauth_welcome.html')
 
 # use decorators to link the function to a url
 @app.route('/')
 @login_required
-def home():
+def index():
     sql = "select * from uSkaterConfig where uSkaterUUID = %s"
     subUserUUID = session['sUUID']
     results = lm.dbconnect(sql,subUserUUID)
