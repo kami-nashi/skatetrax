@@ -58,6 +58,14 @@ def icetimeCurrent(uSkaterUUID):
     ice_hours = current/60
     return ice_hours
 
+# Get the active off-ice config for user
+def configInline(uSkaterUUID):
+    vTUP = (uSkaterUUID)
+    getActiveIceConfig = 'select uSkateComboOff from uSkaterConfig where uSkaterUUID = %s'
+    comboOff = str(dbconnect(getActiveIceConfig,vTUP)[0]['uSkateComboOff'])
+    print(comboOff)
+    return comboOff
+
 # Sums ice hours from previous month
 def icetimeLast(uSkaterUUID):
     sql = 'SELECT ice_time FROM ice_time WHERE (uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != "9") and (uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != "10")'
@@ -215,7 +223,7 @@ def uMantenanceV2(AuthSkaterUUID=None):
     maintCost = 'select sum(m_cost) as m_cost from maintenance where uSkaterUUID = %s'
     mCost = float(dbconnect(maintCost,vTUP)[0]['m_cost'])
 
-    maintenance = [tHours,aHours,uLimit,hDiff,clockDown,mCost]
+    maintenance = [tHours,aHours,uLimit,hDiff,clockDown,mCost,comboIce]
     return maintenance
 
 def maintTable(AuthSkaterUUID):
@@ -314,7 +322,6 @@ def addCostsTotal(AuthSkaterUUID=None):
     return query
 
 def addCostsAPI(AuthSkaterUUID=None):
-    print(addEquip(AuthSkaterUUID))
     costCoaching = coachtimeAdd2(AuthSkaterUUID)
     costIcetime = icetimeAdd(AuthSkaterUUID)
     costEquip = addEquip(AuthSkaterUUID)

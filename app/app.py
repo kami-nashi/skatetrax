@@ -39,6 +39,7 @@ def load_session_from_cookie():
             g.sessions = lm.sessionsBrief(g.sessID)
             g.sessfull = lm.sessionsFull(g.sessID)
             g.mPVC = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4, g.sHours[0]['ice_cost']]
+            g.ice = g.maint[6]
 
     except:
         pass
@@ -252,11 +253,15 @@ def submit_modalSession():
         iceCoach = request.form['coach']
         coachTime = request.form['coach_time']
 
-        sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id,uSkaterUUID)values(%s, %s, %s, %s, %s, %s, %s, %s) """
-        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc,g.sessID)
+        if int(iceType) == 9 or int(iceType) == 10:
+            skates = 0
+        else:
+            skates = g.ice
+
+        sql = """insert into ice_time(date,ice_time,ice_cost,skate_type,coach_time,coach_id,rink_id,uSkaterUUID,uSkaterConfig)values(%s, %s, %s, %s, %s, %s, %s, %s, %s) """
+        recordTuple = (iceDate,iceTime,iceCost,iceType,coachTime,iceCoach,iceLoc,g.sessID,skates)
         lm.dbinsert(sql, recordTuple)
-        return redirect(url_for('index'))
-        #return redirect(request.referrer)
+        return redirect(request.referrer)
     else:
         return redirect(request.referrer)
 
@@ -271,8 +276,8 @@ def submit_modalMaintenance():
         mCost = request.form['m_cost']
         mLocation = request.form['locationID']
 
-        sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location,uSkaterUUID)values(%s, %s, %s, %s,%s) """
-        recordTuple = (mDate,mOn,mCost,mLocation,g.sessID)
+        sql = """insert into maintenance(m_date,m_hours_on,m_cost,m_location,conf_id,uSkaterUUID)values(%s, %s, %s, %s, %s,%s) """
+        recordTuple = (mDate,mOn,mCost,mLocation,g.ice,g.sessID)
         lm.dbinsert(sql, recordTuple)
         return redirect(request.referrer)
     else:
