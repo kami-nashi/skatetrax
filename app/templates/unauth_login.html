@@ -5,6 +5,7 @@
   <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
   <link href="{{ url_for('static', filename='v3/css/bootstrap-table.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap4_supplimental.css') }}" rel="stylesheet">
 
   <!-- Custom fonts for this template-->
   <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -18,8 +19,13 @@
 </head>
 
 <body>
-  <div class="container">
-    <div class="row">
+  <div class="view" style="background-image: url('{{ url_for('static', filename='images/20200212_123815.jpg') }}');
+  background-repeat: no-repeat; background-size: contain; background-position: center center; background-color: #000000;
+  ">
+  <!-- Mask & flexbox options-->
+  <div class="mask rgba-gradient align-items-center view">
+  <div class="container view ">
+    <div class="row view ">
       <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
         <div class="card card-signin my-5">
           <div class="card-body">
@@ -46,7 +52,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div></div></div>
 </body>
 
 </html>

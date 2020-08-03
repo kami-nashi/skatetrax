@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SkateTrax Intro</title>
+    <title>SkateTrax</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap4_supplimental.css') }}" rel="stylesheet">
   </head>
   <body>
+  <div class="view" style="background-image: url('{{ url_for('static', filename='images/20200212_123815.jpg') }}');
+  background-repeat: no-repeat; background-size: contain; background-position: center center; background-color: #000000;
+  ">
+  <!-- Mask & flexbox options-->
+  <div class="mask rgba-gradient align-items-center view">
 
-    <div class="container">
-
+    <div class="container view ">
       <!-- child template -->
       {% block content %}{% endblock %}
 
@@ -22,6 +27,7 @@
         {{ message }}
       {% endfor %}
     </div>
-
+  </div>
+</div>
   </body>
 </html>

@@ -1,9 +1,15 @@
 
 {% extends "unauth_base.html" %}
 {% block content %}
+<div class="row view">
 
-<h1>Welcome to SkateTrax!</h1>
-<br>
-<p>Click <a href="/login">here</a> to go login!</p>
-
+<div class="col-sm-9 col-md-7 col-lg-5 mx-auto view">
+  <div class="card card-signin my-5">
+    <div class="card-body no-wrap">
+      <h1 class="card-title text-center">Welcome to SkateTrax!</h1>
+    </div>
+    <div class="card-body text-center">Click <a href="/login">here</a> to go login!</div>
+  </div>
+</div>
+</div>
 {% endblock %}
