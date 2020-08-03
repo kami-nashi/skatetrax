@@ -12,11 +12,11 @@
             <tbody>
             <tr class="small">
                 <td class="text-left">Name:</td>
-                <td class="text-left">Ashley Young</td>
+                <td class="text-left">{{ info[0]['uSkaterFname'] + ' ' + info[0]['uSkaterLname'] }}</td>
             </tr>
             <tr class="small">
                 <td class="text-left">City/State:</td>
-                <td class="text-left">Fayetteville, NC</td>
+                <td class="text-left">{{ info[0]['uSkaterCity'] + ' ' + info[0]['uSkaterState'] }}</td>
             </tr>
             <tr class="small">
                 <td class="text-left">Skater Type:</td>
@@ -35,7 +35,7 @@
         <tbody>
         <tr class="small">
             <td class="text-left">UFSA:</td>
-            <td class="text-left"> 12345678 </td>
+            <td class="text-left"> {{ info[0]['uSkaterUFSAid'] }}</td>
         </tr>
         <tr class="small">
             <td class="text-left">Club:</td>
@@ -44,8 +44,8 @@
         </tbody>
     </table>
 </div>
-<div class="col-2 col-sm-2 placeholder">
-    <table class="table table" style="width:auto;" align="center">
+<div class="col-2 col-sm-2 placeholder ">
+    <table class="table table  no-wrap" style="width:auto;" align="center">
         <thead>
         <tr>
         <th colspan="2" class="text-center"> Current Training Information </th>

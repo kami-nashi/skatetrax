@@ -132,9 +132,10 @@ def journal():
 @app.route("/skater_overview")
 @login_required
 def skater_overview():
+    uSkaterInfo = lm.uSkaterInfo(g.sessID)
     sOff = lm.skaterOffBlades(g.sessID)
     sIce = lm.skaterIceBlades(g.sessID)
-    return render_template('etemp_skater_overview.html',ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce)
+    return render_template('etemp_skater_overview.html',ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo)
 
 @app.route("/maintenance")
 @login_required
