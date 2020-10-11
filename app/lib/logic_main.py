@@ -207,8 +207,11 @@ def uMantenanceV2(AuthSkaterUUID=None):
     # Now, we need to get the amount of hours were on the blade at the time of sharpening, add a row for that on the maint_table as m_hours_on
     getActiveMaintHours = 'select sum(m_hours_on) as mHours from maintenance WHERE maintenance.uSkaterUUID = %s and maintenance.conf_id = %s'
     evTUP = (AuthSkaterUUID,comboIce)
-    aHours = float(dbconnect(getActiveMaintHours, evTUP)[0]['mHours'])
-
+    aHours = dbconnect(getActiveMaintHours, evTUP)[0]['mHours']
+    if aHours is None:
+        aHours = 0
+    else:
+        aHours = float(aHours)
     # Next, get the user's preferred maintenance clock
     getUserMaintLimit = 'select uSkaterMaintPref from uSkaterConfig where uSkaterUUID = %s'
     uLimit = float(dbconnect(getUserMaintLimit,vTUP)[0]['uSkaterMaintPref'])
@@ -222,6 +225,10 @@ def uMantenanceV2(AuthSkaterUUID=None):
 
     maintCost = 'select sum(m_cost) as m_cost from maintenance where uSkaterUUID = %s'
     mCost = float(dbconnect(maintCost,vTUP)[0]['m_cost'])
+    if mCost is None:
+        mCost = 0
+    else:
+        pass
 
     maintenance = [tHours,aHours,uLimit,hDiff,clockDown,mCost,comboIce]
     return maintenance
@@ -430,7 +437,7 @@ def jVideos(AuthSkaterUUID,jv):
         sql = 'SELECT ice_time.*, j_videos.* FROM ice_time, j_videos WHERE j_videos.uSkaterUUID = %s AND ice_time.uSkaterUUID = %s AND ice_time.has_video = 1 AND ice_time.date = j_videos.date order by ice_time.date desc'
     else:
         vTUP = (AuthSkaterUUID,str(jv))
-        sql = "SELECT * FROM j_videos WHERE uSkaterUUID = %s AND date = %s"
+        sql = "SELECT * FROM j_videos WHERE uSkaterUUID = %s AND DATE(date) = %s"
     results = dbconnect(sql,vTUP)
     return results
 
