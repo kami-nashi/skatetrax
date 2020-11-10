@@ -463,3 +463,12 @@ def skaterIceBlades(AuthSkaterUUID):
     sql = 'select uSkaterBoots.bootsName, uSkaterBoots.bootsModel, uSkaterBoots.bootsSize, uSkaterBlades.bladesName, uSkaterBlades.bladesSize, uSkaterBlades.bladesModel from uSkaterConfig, uSkateConfig, uSkaterBoots, uSkaterBlades where uSkaterConfig.uSkaterUUID = %s AND uSkaterConfig.uSkaterUUID = uSkateConfig.uSkaterUUID and uSkaterConfig.uSkateComboIce = uSkateConfig.aSkateConfigID and uSkateConfig.uSkaterBootsID = uSkaterBoots.ID and uSkateConfig.uSkaterBladesID = uSkaterBlades.ID;'
     results = dbconnect(sql,vTUP)
     return results
+
+################################################################################
+# skater info for session_cookie_crap
+
+def skaterType(AuthSkaterUUID):
+    vTUP = AuthSkaterUUID
+    sql = 'select uSkaterConfig.uSkaterType from uSkaterConfig where uSkaterUUID = %s'
+    results = dbconnect(sql,vTUP)
+    return results

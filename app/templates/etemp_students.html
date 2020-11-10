@@ -1,0 +1,28 @@
+{% extends "template.html" %}
+
+{% block chart_body %}
+
+{% if skatertype|int() != 2 %}
+
+<h1>Sorry, this page is for coaches only.</h1>
+
+{% elif skatertype|int() == 2 %}
+
+<table class="table table-striped"> <thead>
+<tr><td> Student Name </td><td> Last Month Lesson Hours </td><td> Last Month Practice </td></tr></thead><tbody>
+
+{% for student in studentList %}
+   <tr><td>{{ student['uSkaterFname'] }} {{ student['uSkaterLname'] }}</td><td>60 Minutes</td><td>30 Minutes</td></tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+</div>
+
+{% else %}
+<!-- Nope. Nothing. -->
+{% endif %}
+
+
+{% endblock %}

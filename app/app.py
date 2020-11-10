@@ -18,6 +18,7 @@ import math
 
 import lib.logic_json as lj
 import lib.logic_main as lm
+import lib.logic_coach as lc
 
 app = Flask(__name__)
 app.secret_key = 'password1'
@@ -40,7 +41,7 @@ def load_session_from_cookie():
             g.sessfull = lm.sessionsFull(g.sessID)
             g.mPVC = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4, g.sHours[0]['ice_cost']]
             g.ice = g.maint[6]
-
+            g.skatertype = lm.skaterType(g.sessID)[0]['uSkaterType']
     except:
         pass
 
@@ -66,7 +67,7 @@ def index():
     sql = "select * from uSkaterConfig where uSkaterUUID = %s"
     subUserUUID = session['sUUID']
     results = lm.dbconnect(sql,subUserUUID)
-    return render_template('etemp_dashboard.html', ses=session, costs=g.costs, hours=g.mHours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)  # render a template
+    return render_template('etemp_dashboard.html',  skatertype=g.skatertype, ses=session, costs=g.costs, hours=g.mHours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now)  # render a template
 
 @app.route('/logout')
 @login_required
@@ -98,6 +99,7 @@ def login():
                 asUUID = (authSkaterUUID[0]['uSkaterUUID'])
                 aSkater = 'select * from uSkaterConfig where uSkaterUUID = %s'
                 aUserInfo = lm.dbconnect(aSkater,asUUID)
+                print(aUserInfo)
                 session['username'] = aUser[0]['uLoginID']
                 session['sUUID'] = aUser[0]['uSkaterUUID']
                 session['username'] = aUser[0]['uLoginID']
@@ -116,7 +118,15 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template('etemp_dashboard.html', modal1=g.modalSessions, ses=session, thour=g.hours[2], hours=g.mHours, costs=g.costs, maint=g.maint, chart_body=g.sessions )
+    return render_template('etemp_dashboard.html', skatertype=g.skatertype, modal1=g.modalSessions, ses=session, thour=g.hours[2], hours=g.mHours, costs=g.costs, maint=g.maint, chart_body=g.sessions )
+
+@app.route("/students")
+@login_required
+def students():
+    studentList = lc.coachListStudents(g.sessID)
+    for i in studentList:
+        print(i['uSkaterFname'])
+    return render_template('etemp_students.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, studentList=studentList)
 
 @app.route("/journal")
 @login_required
@@ -127,7 +137,7 @@ def journal():
     else:
         print(jDate, 'its not empty')
         jTable = lm.jVideos(g.sessID,jDate)
-    return render_template('etemp_journals.html', ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
+    return render_template('etemp_journals.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
 
 @app.route("/skater_overview")
 @login_required
@@ -135,13 +145,13 @@ def skater_overview():
     uSkaterInfo = lm.uSkaterInfo(g.sessID)
     sOff = lm.skaterOffBlades(g.sessID)
     sIce = lm.skaterIceBlades(g.sessID)
-    return render_template('etemp_skater_overview.html',ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo)
+    return render_template('etemp_skater_overview.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo)
 
 @app.route("/maintenance")
 @login_required
 def maintenance():
     maintTable = lm.maintTable(g.sessID)
-    return render_template('etemp_maintenance.html', ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
+    return render_template('etemp_maintenance.html', skatertype=g.skatertype, ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
 
 @app.route("/ice_time")
 @login_required
@@ -173,7 +183,7 @@ def iceTime():
     inlineResults = [inlineLast,inlineCurrent,inlineStatus]
 
     pData = lm.punchCard(g.sessID)
-    return render_template('etemp_icetime.html', ses=session, costs=g.costs, hours=g.hours, mPVC=g.mPVC, maint=g.maint, chart_body=g.sessfull, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
+    return render_template('etemp_icetime.html', skatertype=g.skatertype, ses=session, costs=g.costs, hours=g.hours, mPVC=g.mPVC, maint=g.maint, chart_body=g.sessfull, thour=g.hours[2], hStatus=hResults, inlineStatus=inlineResults, modal1=g.modalSessions, calDate=g.now, pData=pData)
 
 
 ### JSON/API Stuff ###
