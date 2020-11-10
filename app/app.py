@@ -45,7 +45,23 @@ def load_session_from_cookie():
     except:
         pass
 
-# Login Decorator
+
+#    hours = lm.monthlyCoachTime(1)[0]['monthly_coach']
+@app.context_processor
+def my_utility_processor():
+    def coachListStudentCoachedHours(x):
+        hours = lm.monthlyCoachTime(x)[0]['monthly_coach']
+        print(hours)
+        return hours
+
+    def coachListStudentPracticeHours(x):
+        hours = lm.monthlyIceTime(x)[0]['monthly_ice']
+        print(hours)
+        return hours
+
+    return dict(result=coachListStudentCoachedHours, practice=coachListStudentPracticeHours)
+
+# login decorator
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -124,8 +140,6 @@ def dashboard():
 @login_required
 def students():
     studentList = lc.coachListStudents(g.sessID)
-    for i in studentList:
-        print(i['uSkaterFname'])
     return render_template('etemp_students.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, studentList=studentList)
 
 @app.route("/journal")
@@ -293,6 +307,8 @@ def submit_modalMaintenance():
         return redirect(request.referrer)
     else:
         return redirect(request.referrer)
+
+
 
 
 
