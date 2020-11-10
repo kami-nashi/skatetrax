@@ -10,5 +10,5 @@ def coachStudentHours(uSkaterUUID=None):
     vTUP = uSkaterUUID,1
     sql = 'select * from uSkaterConfig where activeCoach = %s and uSkaterType = %s'
     results = st.dbconnect(sql,vTUP)
-    uSkaterUUID
+    #uSkaterUUID
     return results
