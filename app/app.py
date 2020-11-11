@@ -47,9 +47,9 @@ def load_session_from_cookie():
 
 @app.context_processor
 def my_utility_processor():
-    #this function is only used by the coaches roster.  It takes the uid of
-    #a student via the for-loop, then uses it to calculate the amount of coached
-    #hours in the last 30 days
+    # this function is only used by the coaches roster.  It takes the uid of
+    # a student via the for-loop, then uses it to calculate the amount of coached
+    # hours in the last 30 days
     def coachListStudentCoachedHours(x):
         hours = lm.monthlyCoachTime(x)[0]['monthly_coach']
         print(hours)
@@ -61,6 +61,9 @@ def my_utility_processor():
             fHours = "{:,.2f}".format(hours)
         return fHours
 
+    # this function is only used by the coaches roster.  It takes the uid of
+    # a student via the for-loop, then uses it to calculate the amount of practice
+    # hours in the last 30 days
     def coachListStudentPracticeHours(x):
         hours = lm.monthlyIceTime(x)[0]['monthly_ice']
         print(hours)
