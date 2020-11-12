@@ -20,7 +20,13 @@
             </tr>
             <tr class="small">
                 <td class="text-left">Skater Type:</td>
-                <td class="text-left">Skater (non-coach)</td>
+                {% if skatertype|int() == 1 %}
+                <td class="text-left">Skater (Student)</td>
+                {% elif skatertype|int() == 2 %}
+                <td class="text-left">Skater (Coach)</td>
+                {% else %}
+                <td class="text-left">Other Non-Skater</td>
+                {% endif %}
             </tr>
             </tbody>
         </table>
