@@ -422,6 +422,11 @@ def punchCard(AuthSkaterUUID):
         rResults.append(rData)
     return rResults
 
+################################################################################
+# Modal Stuff
+################################################################################
+
+# default modal function
 def modalSessions():
     sql_coach = 'select * from coaches'
     sql_rink = 'select * from locations'
@@ -438,6 +443,12 @@ def modalSessions():
     for i in other_result:
        id = i['id']
        location_id = i['location_id']
+
+def modalMostUsedRink(AuthSkaterUUID):
+    sql = 'select distinct concat(rink_id) as rinks, count(*) as counts from ice_time where MONTH(CURDATE()) = MONTH(date) AND YEAR(CURDATE()) = YEAR(date)group by rinks order by counts desc limit %s'
+    vTUP = (AuthSkaterUUID)
+    results = dbconnect(sql,vTUP)[0]
+    return results
 
 def jVideos(AuthSkaterUUID,jv):
     vTUP = (AuthSkaterUUID,AuthSkaterUUID)

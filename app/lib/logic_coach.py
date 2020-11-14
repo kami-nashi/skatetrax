@@ -11,3 +11,13 @@ def coachStudentHours(uSkaterUUID=None):
     sql = 'select * from uSkaterConfig where activeCoach = %s and uSkaterType = %s'
     results = st.dbconnect(sql,vTUP)
     return results
+
+def studentVideos(uSkaterUUID=None):
+    vTUP = (uSkaterUUID)
+    if uSkaterUUID == 0:
+        print('welp. its empty')
+    else:
+        vTUP = (uSkaterUUID)
+        sql = "SELECT * FROM j_videos WHERE uSkaterUUID = %s"
+    results = st.dbconnect(sql,vTUP)
+    return results

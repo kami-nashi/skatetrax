@@ -9,10 +9,10 @@
 {% elif skatertype|int() == 2 %}
 
 <table class="table table-striped"> <thead>
-<tr><td style="width: 15%;"><strong>Student</strong></td><td style="width: 20%;"><strong>Coached Hours (Last 30 Days)</strong></td><td style="width: 20%;"> <strong>Practice Hours (Last 30 Days)</strong></td><td><strong></strong></td><td><strong></strong></td></tr></thead><tbody>
+<tr><td style="width: 15%;"><strong>Student</strong></td><td style="width: 5%;"><strong>Videos</strong></td><td style="width: 20%;"><strong>Coached Hours (Last 30 Days)</strong></td><td style="width: 20%;"> <strong>Practice Hours (Last 30 Days)</strong></td><td><strong></strong></td></tr></thead><tbody>
 
 {% for student in studentList %}
-   <tr><td>{{ student['uSkaterFname'] }} {{ student['uSkaterLname'] }}</td><td>{{ result(student['uSkaterUUID']) }}</td><td>{{ practice(student['uSkaterUUID']) }}</td><td></td><td></td></tr>
+   <tr><td>{{ student['uSkaterFname'] }} {{ student['uSkaterLname'] }}</td><td align="center"><a href="/studentJournal?uSkater={{ student['id'] }}"><img src="{{ url_for('static', filename='images/filmreel.png') }}" style="width:32px;height:32px;"></a></td><td>{{ result(student['uSkaterUUID']) }}</td><td>{{ practice(student['uSkaterUUID']) }}</td><td></td><td></td></tr>
 
 {% endfor %}
 

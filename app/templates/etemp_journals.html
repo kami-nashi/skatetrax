@@ -2,10 +2,10 @@
 
 {% block chart_body %}
 <table class="table table-striped"> <thead>
-<tr><td> Date </td><td> Description </td><td> Video URL </td><td> Sharing Platform </tr></td></thead><tbody>
+<tr><td> Date </td><td> Description </td><td> Video URL </td><td> Sharing Platform </td></tr></thead><tbody>
 
 {% for i in journalTable %}
-   <tr><td>{{ i['date'] }}</td><td>{{ i['name'] }}</td><td><a target='_blank' href="{{ i['url'].decode('utf-8') }}"> {{ i['url'].decode('utf-8') }}</a></td><td>{{ i['sharing_platform'] }}</tr></td>
+   <tr><td>{{ i['date'] }}</td><td>{{ i['name'] }}</td><td><a target='_blank' href="{{ i['url'].decode('utf-8') }}"> {{ i['url'].decode('utf-8') }}</a></td><td>{{ i['sharing_platform'] }}</td></tr>
 
 {% endfor %}
 

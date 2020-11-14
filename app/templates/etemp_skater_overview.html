@@ -24,6 +24,8 @@
                 <td class="text-left">Skater (Student)</td>
                 {% elif skatertype|int() == 2 %}
                 <td class="text-left">Skater (Coach)</td>
+                {% elif skatertype|int() == 3 %}
+                <td class="text-left">Family</td>
                 {% else %}
                 <td class="text-left">Other Non-Skater</td>
                 {% endif %}

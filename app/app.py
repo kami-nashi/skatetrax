@@ -158,10 +158,24 @@ def students():
     studentList = lc.coachListStudents(g.sessID)
     return render_template('etemp_students.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, studentList=studentList)
 
+@app.route("/studentJournal")
+@login_required
+def studentJournal():
+    uSkater = request.args.get('uSkater', default = '', type = str)
+    if uSkater == '':
+        print(uSkater, 'There is nothing to do here')
+        jTable = ''
+    else:
+        print(uSkater, 'its not empty')
+        jTable = lc.studentVideos(uSkater)
+
+    return render_template('etemp_journals.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
+
 @app.route("/journal")
 @login_required
 def journal():
     jDate = request.args.get('date', default = '', type = str)
+
     if jDate == '':
         jTable = lm.jVideos(g.sessID,jv=0)
     else:
