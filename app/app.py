@@ -169,7 +169,7 @@ def studentJournal():
         print(uSkater, 'its not empty')
         jTable = lc.studentVideos(uSkater)
 
-    return render_template('etemp_journals.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
+    return render_template('etemp_studentJournals.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now, journalTable=jTable)
 
 @app.route("/journal")
 @login_required
@@ -186,9 +186,18 @@ def journal():
 @app.route("/skater_overview")
 @login_required
 def skater_overview():
-    uSkaterInfo = lm.uSkaterInfo(g.sessID)
+    typeCheck = lc.uCoachInfo(g.sessID)[0]['uSkaterType']
+    print(typeCheck)
+    if typeCheck == 1:
+        uSkaterInfo = lm.uSkaterInfo(g.sessID)
+    elif typeCheck == 2:
+        uSkaterInfo =lc.uCoachInfo(g.sessID)
+    else:
+        uSkaterInfo = lm.uSkaterInfo(g.sessID)
+
     sOff = lm.skaterOffBlades(g.sessID)
     sIce = lm.skaterIceBlades(g.sessID)
+
     return render_template('etemp_skater_overview.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo)
 
 @app.route("/maintenance")
@@ -337,10 +346,6 @@ def submit_modalMaintenance():
         return redirect(request.referrer)
     else:
         return redirect(request.referrer)
-
-
-
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, use_reloader=True, debug=True)

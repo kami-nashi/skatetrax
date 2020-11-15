@@ -461,13 +461,14 @@ def jVideos(AuthSkaterUUID,jv):
     return results
 
 ################################################################################
-# Pull all skater info from the uSkaterConfig tables
+# Pull all skater info from the uSkaterConfig tables for students ?wierd?
 def uSkaterInfo(AuthSkaterUUID):
     vTUP = (AuthSkaterUUID)
     #sql = 'select * from uSkaterConfig where uSkaterUUID = %s'
     sql = 'select * from uSkaterConfig, coaches where uSkaterConfig.uSkaterType = "1" and uSkaterConfig.activeCoach = coaches.uuid and uSkaterConfig.uSkaterUUID = %s'
     results = dbconnect(sql,vTUP)
     return results
+
 ################################################################################
 # boot & blade configurations
 

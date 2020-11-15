@@ -1,0 +1,27 @@
+{% extends "template.html" %}
+
+{% block chart_body %}
+
+{% if skatertype|int() != 2 %}
+
+<h1>Sorry, this page is for coaches only.</h1>
+
+{% elif skatertype|int() == 2 %}
+
+<table class="table table-striped"> <thead>
+<tr><td> Date </td><td> Description </td><td> Video URL </td><td> Sharing Platform </td></tr></thead><tbody>
+
+{% for i in journalTable %}
+   <tr><td>{{ i['date'] }}</td><td>{{ i['name'] }}</td><td><a target='_blank' href="{{ i['url'].decode('utf-8') }}"> {{ i['url'].decode('utf-8') }}</a></td><td>{{ i['sharing_platform'] }}</td></tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+</div>
+
+{% else %}
+<!-- Nope. Nothing. -->
+{% endif %}
+
+{% endblock %}
