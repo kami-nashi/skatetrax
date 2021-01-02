@@ -10,6 +10,7 @@ from flask import url_for
 from flask import g
 
 from functools import wraps
+import configparser as conf
 
 import json
 import pymysql
@@ -21,7 +22,13 @@ import lib.logic_main as lm
 import lib.logic_coach as lc
 
 app = Flask(__name__)
-app.secret_key = 'password1'
+
+configParser = conf.RawConfigParser()
+configFilePath = r'/etc/skatetrax/settings.conf'
+configParser.read(configFilePath)
+appConfig = configParser.get('appKey', 'secret')
+
+app.config['SECRET_KEY'] = appConfig
 
 @app.before_request
 def load_session_from_cookie():

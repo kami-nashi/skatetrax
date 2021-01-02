@@ -68,7 +68,7 @@ def configInline(uSkaterUUID):
 
 # Sums ice hours from previous month
 def icetimeLast(uSkaterUUID):
-    sql = 'SELECT ice_time FROM ice_time WHERE (uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != "9") and (uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type != "10")'
+    sql = 'SELECT ice_time FROM ice_time where (uSkaterUUID = %s and (YEAR(DATE) = YEAR(current_date - interval 1 month) and month(date) = month(current_date - interval 1 month))  and skate_type != "9") and (uSkaterUUID = %s AND (YEAR(DATE) = YEAR(current_date - interval 1 month) and month(date) = month(current_date - interval 1 month))  and skate_type != "10")'
     vTUP = (uSkaterUUID,uSkaterUUID)
     results = dbconnect(sql,vTUP)
     current = int(0)
@@ -93,7 +93,8 @@ def inlinetimeCurrent(uSkaterUUID):
 # Sums inline hours from previous month
 def inlinetimeLast(uSkaterUUID):
     vTUP = (uSkaterUUID,uSkaterUUID)
-    sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
+    sql = 'SELECT ice_time FROM ice_time where (uSkaterUUID = %s and (YEAR(DATE) = YEAR(current_date - interval 1 month) and month(date) = month(current_date - interval 1 month))  and skate_type = "9") or (uSkaterUUID = %s AND (YEAR(DATE) = YEAR(current_date - interval 1 month) and month(date) = month(current_date - interval 1 month))  and skate_type = "10")'
+    #sql = 'SELECT ice_time FROM ice_time WHERE uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 9 or uSkaterUUID = %s AND MONTH(CURDATE()) - 1= MONTH(date) AND YEAR(CURDATE()) = YEAR(date) and skate_type = 10'
     results = dbconnect(sql,vTUP)
     current = int(0)
     for i in results:
