@@ -1,4 +1,13 @@
 import lib.logic_main as st
+import requests
+import json
+
+
+def userSend(userJSON):
+    server_ip = 'http://127.0.0.1:5002/test'
+    headers = {'Content-Type': 'application/json'}
+    server_return = requests.post(server_ip,headers=headers,data=json.dumps(userJSON))
+    return
 
 def gatherNewUser():
     # uSkaterConfig Section

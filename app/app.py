@@ -20,6 +20,7 @@ import math
 import lib.logic_json as lj
 import lib.logic_main as lm
 import lib.logic_coach as lc
+import lib.logic_newuser as lnu
 
 app = Flask(__name__)
 appConfig = lm.baseConfig()
@@ -35,7 +36,7 @@ def signup():
     else:
         return render_template('mod_disabled.html')
 
-@app.route('/newUser')
+@app.route('/newUser', methods=['POST'])
 def newUser():
     if request.method == 'POST':
 
@@ -52,8 +53,8 @@ def newUser():
       data = {'loginData':{'loginID': loginID, 'password': password, 'email': email},'skaterData':{'uSkaterFname': fname, 'uSkaterLname': lname, 'uSkaterCity': '', 'uSkaterState': '', 'uSkaterMaintPref': '21', 'uSkaterType': '1', 'activeCoach': '0'}}
       userJSON = json.dumps(data)
       #print(data)
-      test.createUser(userJSON)
-    return
+      lnu.userSend(userJSON)
+    return 'new user data sent!'
 
 @app.before_request
 def load_session_from_cookie():
