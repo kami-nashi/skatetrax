@@ -22,13 +22,38 @@ import lib.logic_main as lm
 import lib.logic_coach as lc
 
 app = Flask(__name__)
-
-configParser = conf.RawConfigParser()
-configFilePath = r'/etc/skatetrax/settings.conf'
-configParser.read(configFilePath)
-appConfig = configParser.get('appKey', 'secret')
-
+appConfig = lm.baseConfig()
 app.config['SECRET_KEY'] = appConfig
+
+newUsers = lm.moduleConfig()
+
+@app.route('/signup')
+def signup():
+    newUsers = lm.moduleConfig()
+    if newUsers == '1':
+        return render_template('signup.html')
+    else:
+        return render_template('mod_disabled.html')
+
+@app.route('/newUser')
+def newUser():
+    if request.method == 'POST':
+
+      # loginData
+      loginID = request.form['loginID']
+      password = request.form['password']
+      email = request.form['email']
+
+      # userData
+      fname = request.form['fname']
+      lname = request.form['lname']
+
+      # assembly time
+      data = {'loginData':{'loginID': loginID, 'password': password, 'email': email},'skaterData':{'uSkaterFname': fname, 'uSkaterLname': lname, 'uSkaterCity': '', 'uSkaterState': '', 'uSkaterMaintPref': '21', 'uSkaterType': '1', 'activeCoach': '0'}}
+      userJSON = json.dumps(data)
+      #print(data)
+      test.createUser(userJSON)
+    return
 
 @app.before_request
 def load_session_from_cookie():

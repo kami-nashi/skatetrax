@@ -3,6 +3,20 @@ import math
 import configparser as conf
 from collections import defaultdict
 
+def baseConfig():
+    configParser = conf.RawConfigParser()
+    configFilePath = r'/etc/skatetrax/settings.conf'
+    configParser.read(configFilePath)
+    appConfig = configParser.get('appKey', 'secret')
+    return appConfig
+
+def moduleConfig():
+    configParser = conf.RawConfigParser()
+    configFilePath = r'/etc/skatetrax/settings.conf'
+    configParser.read(configFilePath)
+    appConfig = configParser.get('modules', 'newUsers')
+    return appConfig
+
 # sanitize know problem makers from user input strings
 def stripper(str):
     chars = [';', '#', '--', '//', '/', '.', '!', '\s', '\S', '*', '?', '\t', '\n', '\r', '@', '\\', '\\\\', '"', "'", 'drop']
