@@ -54,7 +54,8 @@ def newUser():
       userJSON = json.dumps(data)
       #print(data)
       lnu.userSend(userJSON)
-    return 'new user data sent!'
+    return render_template('signup_complete.html')
+
 
 @app.before_request
 def load_session_from_cookie():
