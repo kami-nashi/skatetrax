@@ -61,21 +61,40 @@ def newUser():
 def load_session_from_cookie():
     try:
         if session['logged_in'] == True:
+
+            def sanityZero(x):
+                if x is None:
+                    x = int(0)
+                else:
+                    x = int(x)
+                return x
+
+            def sanityList(x):
+                if x is None:
+                    x = dict()
+                else:
+                    x = x
+                return x
+
+            ###
             g.sessID = session.get('uSkaterUUID')
+            g.skatertype = lm.skaterType(session.get('uSkaterUUID'))[0]['uSkaterType']
             g.now = datetime.date.today()
             g.modalSessions = lj.sessionModal()
             g.costs = lm.addCostsTotal(g.sessID)
             g.hours = lm.addHoursTotal(g.sessID)
-            g.cHours = lm.monthlyCoachTime(g.sessID)
-            g.sHours = lm.monthlyIceTime(g.sessID)
-            g.uHours = math.ceil(g.sHours[0]['monthly_ice']*4)/4-math.ceil(g.cHours[0]['monthly_coach']*4)/4
-            g.mHours = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4]
+            g.cHours = sanityZero(lm.monthlyCoachTime(g.sessID)[0]['monthly_coach'])
+            g.saHours = sanityZero(lm.monthlyIceTime(g.sessID)[0]['monthly_ice'])
+            g.sbHours = sanityZero(lm.monthlyIceTime(g.sessID)[0]['ice_cost'])
+            g.uHours = math.ceil(g.saHours*4)/4-math.ceil(g.cHours*4)/4
+            g.mHours = [g.uHours, math.ceil(g.cHours)/4]
             g.maint = lm.uMantenanceV2(g.sessID)
-            g.sessions = lm.sessionsBrief(g.sessID)
+            g.sessions = sanityList(lm.sessionsBrief(g.sessID))
             g.sessfull = lm.sessionsFull(g.sessID)
-            g.mPVC = [g.uHours, math.ceil(g.cHours[0]['monthly_coach']*4)/4, g.sHours[0]['ice_cost']]
+            g.mPVC = [g.uHours, math.ceil(g.cHours*4)/4, g.sbHours]
             g.ice = g.maint[6]
-            g.skatertype = lm.skaterType(g.sessID)[0]['uSkaterType']
+            ###
+
     except:
         pass
 

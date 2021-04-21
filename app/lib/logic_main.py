@@ -190,7 +190,7 @@ def monthlyIceTime(AuthSkaterUUID=None):
     vTUP = (AuthSkaterUUID)
     sql = "SELECT SUM(ice_time/60) AS monthly_ice, sum(ice_cost) AS ice_cost FROM ice_time WHERE uSkaterUUID = %s AND date > (DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
     results = dbconnect(sql, vTUP)
-    #\if results is None:
+    #if results is None:
     #    fResults = int(0)
     #else:
     #    fResults = int(results)

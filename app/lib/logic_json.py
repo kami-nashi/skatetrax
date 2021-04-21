@@ -2,6 +2,13 @@ import lib.logic_main as st
 import json
 import math
 
+def sanityZero(x):
+    if x is None:
+        x = int(0)
+    else:
+        x = int(x)
+    return x
+
 def maintClock(uSkaterUUID=None):
     vTUP = uSkaterUUID
     maint = st.uMantenanceV2(vTUP)
@@ -17,10 +24,10 @@ def budget(uSkaterUUID=None):
 
 def monthlyPie(uSkaterUUID=None):
     vTUP = uSkaterUUID
-    cHours = st.monthlyCoachTime(uSkaterUUID)
-    sHours = st.monthlyIceTime(uSkaterUUID)
-    uHours = math.ceil(sHours[0]['monthly_ice']*4)/4-math.ceil(cHours[0]['monthly_coach']*4)/4
-    mPVC = [uHours, math.ceil(cHours[0]['monthly_coach']*4)/4, float(sHours[0]['ice_cost'])]
+    cHours = sanityZero(st.monthlyCoachTime(uSkaterUUID)[0]['monthly_coach'])
+    sHours = sanityZero(st.monthlyIceTime(uSkaterUUID)[0]['monthly_ice'])
+    uHours = math.ceil(sHours*4)/4-math.ceil(cHours*4)/4
+    mPVC = [uHours, math.ceil(cHours*4)/4, float(sHours)]
     yIce = st.addHoursTotal(uSkaterUUID)[0]
     yCoach = st.addHoursTotal(uSkaterUUID)[1]
     dump = [ mPVC[0], mPVC[1],yIce, yCoach ]
