@@ -21,6 +21,7 @@ import lib.logic_json as lj
 import lib.logic_main as lm
 import lib.logic_coach as lc
 import lib.logic_newuser as lnu
+import lib.connectorSkates as connSkates
 
 app = Flask(__name__)
 appConfig = lm.baseConfig()
@@ -249,9 +250,12 @@ def skater_overview():
         uSkaterInfo = lm.uSkaterInfo(g.sessID)
 
     sOff = lm.skaterOffBlades(g.sessID)
-    sIce = lm.skaterIceBlades(g.sessID)
+    #sIce = lm.skaterIceBlades(g.sessID)
 
-    return render_template('etemp_skater_overview.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo)
+    sIce = connSkates.getSkateMaster(g.sessID)['active']
+    sAll = connSkates.getSkateMaster(g.sessID)['list']
+
+    return render_template('etemp_skater_overview.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo, skates=sAll)
 
 @app.route("/maintenance")
 @login_required
