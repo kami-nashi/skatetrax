@@ -252,8 +252,8 @@ def skater_overview():
     sOff = lm.skaterOffBlades(g.sessID)
     #sIce = lm.skaterIceBlades(g.sessID)
 
-    sIce = connSkates.getSkateMaster(g.sessID)['active']
-    sAll = connSkates.getSkateMaster(g.sessID)['list']
+    sIce = connSkates.getSkateActive(g.sessID)
+    sAll = connSkates.getSkateList(g.sessID)
 
     return render_template('etemp_skater_overview.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, info=uSkaterInfo, skates=sAll)
 
