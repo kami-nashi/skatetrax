@@ -28,6 +28,19 @@ appConfig = lm.baseConfig()
 app.config['SECRET_KEY'] = appConfig
 
 newUsers = lm.moduleConfig()
+##
+#@app.route('/sendit', methods=['GET', 'POST'])
+#def parse_request():#
+#    dataSkaterID = request.form.get('uSkaterUUID')
+#    dataBoots = request.form.get('boots')
+#    dataBlades = request.form.get('blades')
+#    data = [dataSkaterID, dataBoots, dataBlades]
+#    print(data)
+#    return str(data)
+##
+#@app.route('/testform')
+#def testform():#
+#    return render_template('formSkates.html')
 
 @app.route('/signup')
 def signup():
@@ -262,6 +275,17 @@ def skater_overview():
 def maintenance():
     maintTable = lm.maintTable(g.sessID)
     return render_template('etemp_maintenance.html', skatertype=g.skatertype, ses=session, costs=g.costs, hours=g.hours, maint=g.maint, chart_body=g.sessions, thour=g.hours[2], modal1=g.modalSessions, calDate=g.now,maintTable=maintTable)
+
+@app.route("/equipment")
+@login_required
+def eqipment():
+    sOff = lm.skaterOffBlades(g.sessID)
+    #sIce = lm.skaterIceBlades(g.sessID)
+
+    sIce = connSkates.getSkateActive(g.sessID)
+    sAll = connSkates.getSkateList(g.sessID)
+    return render_template('etemp_equipment.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, skates=sAll)
+
 
 @app.route("/ice_time")
 @login_required
