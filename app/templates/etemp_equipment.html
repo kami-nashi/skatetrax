@@ -61,8 +61,42 @@
     </tbody>
     </table>
     </div>
+</section>
+
+<section class="row text-center placeholders">
+  <div class="col-4 col-sm-4 placeholder">
+    <table class="table table-striped" style="width:auto;" align="center" >
+      <thead>
+        <tr>
+         <th colspan="4"  class="text-center">Boot Data</th>
+         </tr>
+
+         {% for boot in boots %}
+             <tr class="small"><td>{{boot['bootsDate']}}</td><td>{{boot['bootsName']}}</td><td>{{boot['bootsModel']}}</td><td>{{boot['bootsSize']}}</td><td>${{boot['bootsPurchAmount']}}</td></tr>
+         {% endfor %}
+
+    </thead><tbody>
+
+    </tbody>
+    </table>
+    </div>
+    <div class="col-4 col-sm-4 placeholder">
+      <table class="table table-striped" style="width:auto;" align="center" >
+        <thead>
+          <tr>
+           <th colspan="4"  class="text-center">Blade Data</th>
+           </tr>
+
+           {% for blade in blades %}
+               <tr class="small"><td>{{blade['bladesDate']}}</td><td>{{blade['bladesName']}}</td><td>{{blade['bladesModel']}}</td><td>{{blade['bladesSize']}}</td><td>${{blade['bladesPurchAmount']}}</td></tr>
+           {% endfor %}
+      </thead><tbody>
+
+      </tbody>
+      </table>
+      </div>
+</section>
 
 
-
-</section><div><div>
+<div><div>
 {% endblock %}

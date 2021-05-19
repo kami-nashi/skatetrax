@@ -284,7 +284,9 @@ def eqipment():
 
     sIce = connSkates.getSkateActive(g.sessID)
     sAll = connSkates.getSkateList(g.sessID)
-    return render_template('etemp_equipment.html', skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, skates=sAll)
+    listBoots = connSkates.getBootsList(g.sessID)
+    listBlades = connSkates.getBladesList(g.sessID)
+    return render_template('etemp_equipment.html', blades=listBlades, boots=listBoots, skatertype=g.skatertype, ses=session, thour=g.hours[2], modal1=g.modalSessions, skateOff=sOff, skateIce=sIce, skates=sAll)
 
 
 @app.route("/ice_time")
