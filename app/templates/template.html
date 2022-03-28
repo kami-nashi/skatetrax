@@ -170,7 +170,7 @@
 
           <!-- Breadcrumbs-->
           <ol class="breadcrumb">
-            <li class="breadcrumb-item active">Hello, {{ ses['fName'] }} {{ ses['lName'] }}! {{ thour[0] }} Tracked Hours. </li>
+            <li class="breadcrumb-item active">Hello, {{ ses['fName'] }} {{ ses['lName'] }}! {{'%0.2f'| format(thour[0]|float) }} Tracked Hours. </li>
           </ol>
           <!-- Area Chart Example-->
           <div class="card mb-3">

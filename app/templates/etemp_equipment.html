@@ -55,7 +55,7 @@
     </thead><tbody>
 
     {% for i in skates %}
-        <tr class="small"><td>{{i['bootsName']}}</td><td>{{i['bootsModel']}}</td><td>{{i['bladesName']}}</td><td>{{i['bladesModel']}}</td></tr>
+        <tr class="small"><td>{{i['bootsName']}}</td><td>{{i['bootsModel']}}</td><td>{{i['bladesName']}}</td><td>{{i['bladesModel']}}</td><td>{{'%0.2f'| format(i['aSkateConfigTime']|float)}}</td></tr>
     {% endfor %}
 
     </tbody>
